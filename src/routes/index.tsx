@@ -257,8 +257,7 @@ function EditableText({
   as?: keyof React.JSX.IntrinsicElements;
 }) {
   if (!editing) {
-    const Tag = As as keyof React.JSX.IntrinsicElements;
-    // @ts-expect-error generic intrinsic
+    const Tag = As as any;
     return <Tag className={className} style={style}>{value}</Tag>;
   }
   if (multiline) {
