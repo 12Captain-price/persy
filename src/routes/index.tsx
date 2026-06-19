@@ -444,9 +444,13 @@ function Grid() {
 function Nav({
   editing,
   onEditClick,
+  theme,
+  onToggleTheme,
 }: {
   editing: boolean;
   onEditClick: () => void;
+  theme: "dark" | "light";
+  onToggleTheme: () => void;
 }) {
   return (
     <header className="relative z-20 mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
@@ -464,19 +468,29 @@ function Nav({
         <a href="#certificates" className="hover:text-white">certificates</a>
         <a href="#contact" className="hover:text-white">contact</a>
       </nav>
-      <button
-        onClick={onEditClick}
-        aria-label={editing ? "Stop editing" : "Edit site"}
-        title={editing ? "Done editing" : "Edit (passcode required)"}
-        className={
-          "flex h-9 w-9 items-center justify-center rounded-full transition " +
-          (editing
-            ? "bg-emerald-400 text-black hover:bg-emerald-300"
-            : "border border-white/20 text-white/70 hover:border-white/50 hover:text-white")
-        }
-      >
-        <Pencil size={15} />
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={onToggleTheme}
+          aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+          title={theme === "dark" ? "Light mode" : "Dark mode"}
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/70 transition hover:border-white/50 hover:text-white"
+        >
+          {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+        </button>
+        <button
+          onClick={onEditClick}
+          aria-label={editing ? "Stop editing" : "Edit site"}
+          title={editing ? "Done editing" : "Edit (passcode required)"}
+          className={
+            "flex h-9 w-9 items-center justify-center rounded-full transition " +
+            (editing
+              ? "bg-emerald-400 text-black hover:bg-emerald-300"
+              : "border border-white/20 text-white/70 hover:border-white/50 hover:text-white")
+          }
+        >
+          <Pencil size={15} />
+        </button>
+      </div>
     </header>
   );
 }
