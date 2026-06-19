@@ -317,6 +317,15 @@ function Index() {
   const { data, setData } = useData();
   const [editing, setEditing] = useState(false);
   const [passOpen, setPassOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    if (typeof window === "undefined") return "dark";
+    return (localStorage.getItem("portfolio.theme") as "dark" | "light") || "dark";
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("portfolio.theme", theme);
+  }, [theme]);
 
   const requestEdit = () => {
     if (editing) setEditing(false);
@@ -325,11 +334,20 @@ function Index() {
 
   return (
     <div
-      className="min-h-screen bg-[#0a0a0a] text-[#ededed] antialiased"
+      className={
+        (theme === "light" ? "theme-light " : "") +
+        "min-h-screen bg-[#0a0a0a] text-[#ededed] antialiased transition-colors"
+      }
       style={{ fontFamily: "Inter, system-ui, sans-serif" }}
     >
       <Grid />
-      <Nav editing={editing} onEditClick={requestEdit} />
+      <Nav
+        editing={editing}
+        onEditClick={requestEdit}
+        theme={theme}
+        onToggleTheme={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+      />
+
       <Hero data={data} setData={setData} editing={editing} />
       <About data={data} setData={setData} editing={editing} />
       <Skills data={data} setData={setData} editing={editing} />
