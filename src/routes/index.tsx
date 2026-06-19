@@ -14,6 +14,8 @@ import {
   X,
   ExternalLink,
   Lock,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import "@fontsource/space-grotesk/400.css";
