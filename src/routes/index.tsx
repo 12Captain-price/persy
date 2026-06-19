@@ -27,7 +27,7 @@ import "@fontsource/inter/500.css";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Persistance Chikanya — Data & Web Portfolio" },
+      { title: "Persistance Chikanya" },
       {
         name: "description",
         content:
