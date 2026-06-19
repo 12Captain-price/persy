@@ -1173,15 +1173,11 @@ function Certificates({
                   </h4>
                   <p className="text-xs text-white/50">{c.issuer}</p>
                   {c.file && (
-                    <a
-                      href={c.file.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-2 inline-flex items-center gap-1 text-xs text-emerald-300 hover:text-emerald-200"
-                    >
-                      <Download size={12} /> View
-                    </a>
+                    <div className="mt-2">
+                      <SecureViewer file={c.file} />
+                    </div>
                   )}
+
                 </>
               )}
             </div>
