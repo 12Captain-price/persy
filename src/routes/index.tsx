@@ -168,6 +168,123 @@ async function uploadFile(file: File, folder: string): Promise<FileRef> {
   return { name: file.name, url: data.signedUrl };
 }
 
+// ---------- Secure file viewer ----------
+
+function SecureViewer({ file, label = "View" }: { file: { name: string; url: string }; label?: string }) {
+  const [open, setOpen] = useState(false);
+  const isImage = /\.(png|jpe?g|gif|webp|svg)$/i.test(file.name);
+  const isPdf = /\.pdf$/i.test(file.name);
+
+  useEffect(() => {
+    if (!open) return;
+    const block = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    };
+    const keyBlock = (e: KeyboardEvent) => {
+      const k = e.key.toLowerCase();
+      if ((e.ctrlKey || e.metaKey) && (k === "s" || k === "u" || k === "p" || k === "c" || k === "a")) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (k === "printscreen") e.preventDefault();
+    };
+    document.addEventListener("contextmenu", block);
+    document.addEventListener("selectstart", block);
+    document.addEventListener("copy", block);
+    document.addEventListener("cut", block);
+    document.addEventListener("dragstart", block);
+    document.addEventListener("keydown", keyBlock);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("contextmenu", block);
+      document.removeEventListener("selectstart", block);
+      document.removeEventListener("copy", block);
+      document.removeEventListener("cut", block);
+      document.removeEventListener("dragstart", block);
+      document.removeEventListener("keydown", keyBlock);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open]);
+
+  const viewerStyle: React.CSSProperties = {
+    userSelect: "none",
+    WebkitUserSelect: "none",
+    WebkitTouchCallout: "none",
+    pointerEvents: "auto",
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center gap-1 rounded-md border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200 hover:bg-emerald-400/20"
+      >
+        {label}
+      </button>
+      {open && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <div
+            className="relative flex h-full max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0a0a0a]"
+            style={viewerStyle}
+          >
+            <div className="flex items-center justify-between border-b border-white/10 px-4 py-2">
+              <span className="truncate text-sm text-white/70" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                {file.name}
+              </span>
+              <button
+                onClick={() => setOpen(false)}
+                className="rounded-md p-1 text-white/60 hover:bg-white/10 hover:text-white"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="relative flex-1 overflow-hidden bg-black" style={viewerStyle}>
+              {isImage ? (
+                <img
+                  src={file.url}
+                  alt=""
+                  draggable={false}
+                  onDragStart={(e) => e.preventDefault()}
+                  onContextMenu={(e) => e.preventDefault()}
+                  className="h-full w-full object-contain"
+                  style={viewerStyle}
+                />
+              ) : isPdf ? (
+                <iframe
+                  src={`https://docs.google.com/gview?url=${encodeURIComponent(file.url)}&embedded=true`}
+                  title="viewer"
+                  className="h-full w-full border-0"
+                  sandbox="allow-scripts allow-same-origin"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center p-8 text-center text-sm text-white/60">
+                  This file type cannot be previewed securely. Contact the owner for access.
+                </div>
+              )}
+              {/* transparent overlay to block drags/long-press on images */}
+              {isImage && (
+                <div
+                  className="absolute inset-0"
+                  onContextMenu={(e) => e.preventDefault()}
+                  onDragStart={(e) => e.preventDefault()}
+                  style={{ background: "transparent" }}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // ---------- Data hook (cloud-backed, with localStorage fallback) ----------
 
 function useData() {
