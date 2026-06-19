@@ -12,7 +12,7 @@ import {
   Image as ImageIcon,
   Plus,
   X,
-
+  ExternalLink,
   Lock,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -55,6 +55,7 @@ type Project = {
   blurb: string;
   stack: string[];
   file?: FileRef;
+  url?: string;
 };
 type Certificate = { title: string; issuer: string; file: FileRef };
 
@@ -984,8 +985,8 @@ function Projects({
               )}
             </div>
 
-            {/* File attachment */}
-            <div className="mt-5 border-t border-white/10 pt-4">
+            {/* File attachment + URL */}
+            <div className="mt-5 space-y-3 border-t border-white/10 pt-4">
               {p.file ? (
                 <div className="flex items-center gap-2">
                   <FileText size={14} className="text-emerald-300" />
@@ -1003,10 +1004,29 @@ function Projects({
                 </div>
               ) : editing ? (
                 <ProjectFileUpload onUploaded={(ref) => updateProject(i, { file: ref })} />
-              ) : (
-                <p className="text-xs text-white/30">No file attached</p>
-              )}
+              ) : null}
+
+              {editing ? (
+                <input
+                  value={p.url ?? ""}
+                  onChange={(e) => updateProject(i, { url: e.target.value })}
+                  placeholder="Project URL (https://...)"
+                  className="w-full rounded-md border border-emerald-400/40 bg-emerald-400/[0.04] px-2 py-1 text-xs text-white outline-none"
+                />
+              ) : p.url ? (
+                <a
+                  href={p.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200 hover:bg-emerald-400/20"
+                >
+                  <ExternalLink size={12} /> Visit site
+                </a>
+              ) : !p.file ? (
+                <p className="text-xs text-white/30">No file or link attached</p>
+              ) : null}
             </div>
+
 
 
             {editing && (
