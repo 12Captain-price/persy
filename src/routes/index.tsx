@@ -14,6 +14,8 @@ import {
   X,
   ExternalLink,
   Lock,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import "@fontsource/space-grotesk/400.css";
@@ -27,7 +29,7 @@ import "@fontsource/inter/500.css";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Persistance Chikanya — Data & Web Portfolio" },
+      { title: "Persistance Chikanya" },
       {
         name: "description",
         content:
@@ -171,115 +173,97 @@ async function uploadFile(file: File, folder: string): Promise<FileRef> {
 
 // ---------- Secure file viewer ----------
 
-function SecureViewer({ file, label = "View" }: { file: { name: string; url: string }; label?: string }) {
+function SecureViewer({ label = "View" }: { file?: { name: string; url: string }; label?: string }) {
   const [open, setOpen] = useState(false);
-  const isImage = /\.(png|jpe?g|gif|webp|svg)$/i.test(file.name);
-  const isPdf = /\.pdf$/i.test(file.name);
 
   useEffect(() => {
     if (!open) return;
-    const block = (e: Event) => {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
     };
-    const keyBlock = (e: KeyboardEvent) => {
-      const k = e.key.toLowerCase();
-      if ((e.ctrlKey || e.metaKey) && (k === "s" || k === "u" || k === "p" || k === "c" || k === "a")) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      if (k === "printscreen") e.preventDefault();
-    };
-    document.addEventListener("contextmenu", block);
-    document.addEventListener("selectstart", block);
-    document.addEventListener("copy", block);
-    document.addEventListener("cut", block);
-    document.addEventListener("dragstart", block);
-    document.addEventListener("keydown", keyBlock);
-    const prevOverflow = document.body.style.overflow;
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("contextmenu", block);
-      document.removeEventListener("selectstart", block);
-      document.removeEventListener("copy", block);
-      document.removeEventListener("cut", block);
-      document.removeEventListener("dragstart", block);
-      document.removeEventListener("keydown", keyBlock);
-      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
     };
   }, [open]);
-
-  const viewerStyle: React.CSSProperties = {
-    userSelect: "none",
-    WebkitUserSelect: "none",
-    WebkitTouchCallout: "none",
-    pointerEvents: "auto",
-  };
 
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1 rounded-md border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200 hover:bg-emerald-400/20"
+        className="inline-flex items-center gap-1.5 rounded-md border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200 hover:bg-emerald-400/20"
       >
         {label}
       </button>
       {open && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
-          onContextMenu={(e) => e.preventDefault()}
-        >
-          <div
-            className="relative flex h-full max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0a0a0a]"
-            style={viewerStyle}
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-md">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+            className="relative w-full max-w-md overflow-hidden rounded-2xl border border-emerald-400/30 bg-gradient-to-br from-[#0d1612] via-[#0a0a0a] to-[#0d1612] p-7 shadow-[0_20px_80px_-20px_rgba(16,185,129,0.4)]"
           >
-            <div className="flex items-center justify-between border-b border-white/10 px-4 py-2">
-              <span className="truncate text-sm text-white/70" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
-                {file.name}
-              </span>
-              <button
-                onClick={() => setOpen(false)}
-                className="rounded-md p-1 text-white/60 hover:bg-white/10 hover:text-white"
-                aria-label="Close"
+            {/* decorative glow */}
+            <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-400/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 -left-10 h-48 w-48 rounded-full bg-cyan-400/10 blur-3xl" />
+
+            <button
+              onClick={() => setOpen(false)}
+              className="absolute right-3 top-3 rounded-md p-1.5 text-white/50 transition hover:bg-white/10 hover:text-white"
+              aria-label="Close"
+            >
+              <X size={16} />
+            </button>
+
+            <div className="relative">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10">
+                <Lock size={24} className="text-emerald-300" />
+              </div>
+
+              <h3
+                className="text-xl font-semibold tracking-tight text-white"
+                style={{ fontFamily: "Space Grotesk, sans-serif" }}
               >
-                <X size={18} />
-              </button>
+                This file is private
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/70">
+                Access to this file is restricted. If you'd like a copy or a walkthrough,
+                please reach out — I'll happily share it with you.
+              </p>
+
+              <div className="mt-6 space-y-2">
+                <a
+                  href="mailto:persytchikanya@gmail.com?subject=Request%20for%20file%20access"
+                  className="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 transition hover:border-emerald-400/40 hover:bg-emerald-400/5"
+                >
+                  <Mail size={16} className="text-emerald-300" />
+                  <div className="flex-1 text-left">
+                    <p className="text-xs uppercase tracking-wider text-white/40">Email</p>
+                    <p className="text-sm text-white">persytchikanya@gmail.com</p>
+                  </div>
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/persistance-tinevimbo-chikanya-169916350"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 transition hover:border-emerald-400/40 hover:bg-emerald-400/5"
+                >
+                  <Linkedin size={16} className="text-emerald-300" />
+                  <div className="flex-1 text-left">
+                    <p className="text-xs uppercase tracking-wider text-white/40">LinkedIn</p>
+                    <p className="text-sm text-white">Message me directly</p>
+                  </div>
+                </a>
+              </div>
+
+              <p className="mt-5 text-center text-[11px] uppercase tracking-[0.2em] text-white/30">
+                Persistance Chikanya
+              </p>
             </div>
-            <div className="relative flex-1 overflow-hidden bg-black" style={viewerStyle}>
-              {isImage ? (
-                <img
-                  src={file.url}
-                  alt=""
-                  draggable={false}
-                  onDragStart={(e) => e.preventDefault()}
-                  onContextMenu={(e) => e.preventDefault()}
-                  className="h-full w-full object-contain"
-                  style={viewerStyle}
-                />
-              ) : isPdf ? (
-                <iframe
-                  src={`https://docs.google.com/gview?url=${encodeURIComponent(file.url)}&embedded=true`}
-                  title="viewer"
-                  className="h-full w-full border-0"
-                  sandbox="allow-scripts allow-same-origin"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center p-8 text-center text-sm text-white/60">
-                  This file type cannot be previewed securely. Contact the owner for access.
-                </div>
-              )}
-              {/* transparent overlay to block drags/long-press on images */}
-              {isImage && (
-                <div
-                  className="absolute inset-0"
-                  onContextMenu={(e) => e.preventDefault()}
-                  onDragStart={(e) => e.preventDefault()}
-                  style={{ background: "transparent" }}
-                />
-              )}
-            </div>
-          </div>
+          </motion.div>
         </div>
       )}
     </>
@@ -335,6 +319,15 @@ function Index() {
   const { data, setData } = useData();
   const [editing, setEditing] = useState(false);
   const [passOpen, setPassOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    if (typeof window === "undefined") return "dark";
+    return (localStorage.getItem("portfolio.theme") as "dark" | "light") || "dark";
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("portfolio.theme", theme);
+  }, [theme]);
 
   const requestEdit = () => {
     if (editing) setEditing(false);
@@ -343,11 +336,20 @@ function Index() {
 
   return (
     <div
-      className="min-h-screen bg-[#0a0a0a] text-[#ededed] antialiased"
+      className={
+        (theme === "light" ? "theme-light " : "") +
+        "min-h-screen bg-[#0a0a0a] text-[#ededed] antialiased transition-colors"
+      }
       style={{ fontFamily: "Inter, system-ui, sans-serif" }}
     >
       <Grid />
-      <Nav editing={editing} onEditClick={requestEdit} />
+      <Nav
+        editing={editing}
+        onEditClick={requestEdit}
+        theme={theme}
+        onToggleTheme={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+      />
+
       <Hero data={data} setData={setData} editing={editing} />
       <About data={data} setData={setData} editing={editing} />
       <Skills data={data} setData={setData} editing={editing} />
@@ -444,9 +446,13 @@ function Grid() {
 function Nav({
   editing,
   onEditClick,
+  theme,
+  onToggleTheme,
 }: {
   editing: boolean;
   onEditClick: () => void;
+  theme: "dark" | "light";
+  onToggleTheme: () => void;
 }) {
   return (
     <header className="relative z-20 mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
@@ -464,19 +470,29 @@ function Nav({
         <a href="#certificates" className="hover:text-white">certificates</a>
         <a href="#contact" className="hover:text-white">contact</a>
       </nav>
-      <button
-        onClick={onEditClick}
-        aria-label={editing ? "Stop editing" : "Edit site"}
-        title={editing ? "Done editing" : "Edit (passcode required)"}
-        className={
-          "flex h-9 w-9 items-center justify-center rounded-full transition " +
-          (editing
-            ? "bg-emerald-400 text-black hover:bg-emerald-300"
-            : "border border-white/20 text-white/70 hover:border-white/50 hover:text-white")
-        }
-      >
-        <Pencil size={15} />
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={onToggleTheme}
+          aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+          title={theme === "dark" ? "Light mode" : "Dark mode"}
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/70 transition hover:border-white/50 hover:text-white"
+        >
+          {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+        </button>
+        <button
+          onClick={onEditClick}
+          aria-label={editing ? "Stop editing" : "Edit site"}
+          title={editing ? "Done editing" : "Edit (passcode required)"}
+          className={
+            "flex h-9 w-9 items-center justify-center rounded-full transition " +
+            (editing
+              ? "bg-emerald-400 text-black hover:bg-emerald-300"
+              : "border border-white/20 text-white/70 hover:border-white/50 hover:text-white")
+          }
+        >
+          <Pencil size={15} />
+        </button>
+      </div>
     </header>
   );
 }
