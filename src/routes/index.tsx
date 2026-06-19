@@ -55,6 +55,7 @@ type Project = {
   blurb: string;
   stack: string[];
   file?: FileRef;
+  url?: string;
 };
 type Certificate = { title: string; issuer: string; file: FileRef };
 
