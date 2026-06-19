@@ -989,22 +989,8 @@ function Projects({
               {p.file ? (
                 <div className="flex items-center gap-2">
                   <FileText size={14} className="text-emerald-300" />
-                  <a
-                    href={p.file.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex-1 truncate text-xs text-white/80 hover:text-emerald-300"
-                  >
-                    {p.file.name}
-                  </a>
-                  <a
-                    href={p.file.url}
-                    download
-                    className="text-white/40 hover:text-white"
-                    aria-label="Download"
-                  >
-                    <Download size={14} />
-                  </a>
+                  <span className="flex-1 truncate text-xs text-white/80">{p.file.name}</span>
+                  <SecureViewer file={p.file} />
                   {editing && (
                     <button
                       onClick={() => updateProject(i, { file: null })}
@@ -1021,6 +1007,7 @@ function Projects({
                 <p className="text-xs text-white/30">No file attached</p>
               )}
             </div>
+
 
             {editing && (
               <button
