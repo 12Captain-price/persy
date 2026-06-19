@@ -11,8 +11,8 @@ import {
   FileText,
   Image as ImageIcon,
   Plus,
-  Download,
   X,
+
   Lock,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
