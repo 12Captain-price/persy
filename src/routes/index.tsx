@@ -503,7 +503,7 @@ function Nav({
       >
         ./portfolio
       </a>
-      <nav className="hidden gap-8 text-sm text-white/60 md:flex">
+      <nav className="hidden gap-6 text-sm text-white/60 lg:flex">
         <a href="#about" className="hover:text-white">about</a>
         <a href="#skills" className="hover:text-white">skills</a>
         <a href="#projects" className="hover:text-white">projects</a>
