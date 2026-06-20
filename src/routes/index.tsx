@@ -1407,6 +1407,7 @@ function Contact({
             editing={editing}
             onChange={(v) => setData((d) => ({ ...d, github: v }))}
           />
+          <ContactForm email={data.email} />
         </div>
       </div>
     </section>
