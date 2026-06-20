@@ -1180,7 +1180,7 @@ function Certificates({
 
   return (
     <section id="certificates" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
-      <SectionLabel n="§ 04" label="certificates" />
+      <SectionLabel n="§ 05" label="certificates" />
       {data.certificates.length === 0 && !editing && (
         <p className="text-sm text-white/40">No certificates uploaded yet.</p>
       )}
