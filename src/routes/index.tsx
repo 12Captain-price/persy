@@ -1734,10 +1734,25 @@ function Blog({
 // ---------- Contact form ----------
 
 function ContactForm({ email }: { email: string }) {
+  const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [from, setFrom] = useState("");
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1751,52 +1766,103 @@ function ContactForm({ email }: { email: string }) {
   };
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className="rounded-xl border border-white/10 bg-white/[0.02] p-4"
-    >
-      <div
-        className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-white/50"
-        style={{ fontFamily: "JetBrains Mono, monospace" }}
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="group flex w-full items-center justify-between rounded-xl border border-emerald-400/30 bg-emerald-400/[0.06] px-5 py-4 text-left transition hover:border-emerald-400/60 hover:bg-emerald-400/[0.1]"
       >
-        Send a message
-      </div>
-      <div className="space-y-2">
-        <input
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={100}
-          placeholder="Your name"
-          className="w-full rounded-md border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-emerald-400/60"
-        />
-        <input
-          type="email"
-          value={from}
-          onChange={(e) => setFrom(e.target.value)}
-          maxLength={255}
-          placeholder="Your email (optional)"
-          className="w-full rounded-md border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-emerald-400/60"
-        />
-        <textarea
-          required
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          maxLength={1000}
-          rows={4}
-          placeholder="Your message"
-          className="w-full resize-y rounded-md border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-emerald-400/60"
-        />
-        <button
-          type="submit"
-          className="w-full rounded-full bg-emerald-400 px-4 py-2 text-sm font-medium text-black transition hover:bg-emerald-300"
+        <span className="flex items-center gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-400/15 text-emerald-300">
+            <Mail size={16} />
+          </span>
+          <span>
+            <span className="block text-sm font-medium text-white">Send me a message</span>
+            <span className="block text-xs text-white/55">Opens a quick form</span>
+          </span>
+        </span>
+        <span className="font-mono text-xs text-emerald-300 transition group-hover:translate-x-0.5">→</span>
+      </button>
+
+      {open && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
+          onClick={() => setOpen(false)}
         >
-          {sent ? "Opening your email…" : "Send via email"}
-        </button>
-        <p className="text-[11px] text-white/40">
-          This opens your email app with the message pre-filled.
-        </p>
-      </div>
-    </form>
+          <motion.form
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.22 }}
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={onSubmit}
+            className="relative w-full max-w-md overflow-hidden rounded-2xl border border-emerald-400/30 bg-[#0d1612] p-7 shadow-[0_20px_80px_-20px_rgba(16,185,129,0.4)]"
+          >
+            <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-400/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 -left-10 h-48 w-48 rounded-full bg-cyan-400/10 blur-3xl" />
+
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="absolute right-3 top-3 rounded-md p-1.5 text-white/50 transition hover:bg-white/10 hover:text-white"
+              aria-label="Close"
+            >
+              <X size={16} />
+            </button>
+
+            <div className="relative">
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10">
+                <Mail size={20} className="text-emerald-300" />
+              </div>
+              <h3
+                className="text-xl font-semibold tracking-tight text-white"
+                style={{ fontFamily: "Space Grotesk, sans-serif" }}
+              >
+                Send a message
+              </h3>
+              <p className="mt-1 text-sm text-white/60">
+                I'll get back to you as soon as I can.
+              </p>
+
+              <div className="mt-5 space-y-2">
+                <input
+                  required
+                  autoFocus
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  maxLength={100}
+                  placeholder="Your name"
+                  className="w-full rounded-md border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-emerald-400/60"
+                />
+                <input
+                  type="email"
+                  value={from}
+                  onChange={(e) => setFrom(e.target.value)}
+                  maxLength={255}
+                  placeholder="Your email (optional)"
+                  className="w-full rounded-md border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-emerald-400/60"
+                />
+                <textarea
+                  required
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  maxLength={1000}
+                  rows={5}
+                  placeholder="Your message"
+                  className="w-full resize-y rounded-md border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-emerald-400/60"
+                />
+                <button
+                  type="submit"
+                  className="w-full rounded-full bg-emerald-400 px-4 py-2.5 text-sm font-medium text-black transition hover:bg-emerald-300"
+                >
+                  {sent ? "Opening your email…" : "Send via email"}
+                </button>
+                <p className="text-[11px] text-white/40">
+                  This opens your email app with the message pre-filled.
+                </p>
+              </div>
+            </div>
+          </motion.form>
+        </div>
+      )}
+    </>
   );
 }
