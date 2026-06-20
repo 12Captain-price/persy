@@ -129,6 +129,7 @@ const DEFAULTS: Data = {
       blurb:
         "Cleaning, EDA and dashboards on academic performance data — Python + Pandas, visualised in Power BI.",
       stack: ["Python", "Pandas", "Power BI"],
+      category: "Data Analysis",
     },
     {
       tag: "02 / data engineering",
@@ -136,6 +137,7 @@ const DEFAULTS: Data = {
       blurb:
         "End-to-end pipeline: ingest raw CSV, transform with SQL, load into Postgres, surface live KPIs.",
       stack: ["Python", "SQL", "Postgres"],
+      category: "Data Engineering",
     },
     {
       tag: "03 / machine learning",
@@ -143,6 +145,7 @@ const DEFAULTS: Data = {
       blurb:
         "Logistic regression & random forest baseline on a synthetic dataset. Focus on evaluation, not hype.",
       stack: ["scikit-learn", "Jupyter", "Matplotlib"],
+      category: "Machine Learning",
     },
     {
       tag: "04 / web dev",
@@ -150,9 +153,29 @@ const DEFAULTS: Data = {
       blurb:
         "Built with React, TypeScript, TanStack Start and Tailwind. Deployed on the edge.",
       stack: ["React", "TypeScript", "Tailwind"],
+      category: "Web Dev",
     },
   ],
   certificates: [],
+  experience: [
+    {
+      role: "BSc Informatics student",
+      org: "NUST",
+      period: "2023 — present",
+      description:
+        "Coursework across databases, statistics, programming and systems. Building portfolio projects on the side.",
+    },
+  ],
+  posts: [
+    {
+      title: "Why I'm learning in public",
+      date: "2026-06-01",
+      excerpt:
+        "Notes on shipping small data projects every week and the habits that actually stick.",
+      body:
+        "I started writing about each project the moment I finished it. The act of explaining forces clarity, and clarity compounds.",
+    },
+  ],
 };
 
 const LEVEL_LABEL: Record<Level, string> = {
