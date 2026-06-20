@@ -56,10 +56,23 @@ type Project = {
   title: string;
   blurb: string;
   stack: string[];
+  category?: string;
   file?: FileRef;
   url?: string;
 };
 type Certificate = { title: string; issuer: string; file: FileRef };
+type Experience = {
+  role: string;
+  org: string;
+  period: string;
+  description: string;
+};
+type Post = {
+  title: string;
+  date: string;
+  excerpt: string;
+  body: string;
+};
 
 type Data = {
   name: string;
@@ -76,6 +89,8 @@ type Data = {
   skills: Skill[];
   projects: Project[];
   certificates: Certificate[];
+  experience: Experience[];
+  posts: Post[];
 };
 
 const DEFAULTS: Data = {
