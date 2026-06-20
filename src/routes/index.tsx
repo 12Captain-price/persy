@@ -977,7 +977,7 @@ function Projects({
 
   return (
     <section id="projects" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
-      <SectionLabel n="§ 03" label="projects" />
+      <SectionLabel n="§ 04" label="projects" />
       <div className="grid gap-6 md:grid-cols-2">
         {data.projects.map((p, i) => (
           <motion.article
