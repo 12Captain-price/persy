@@ -1069,6 +1069,20 @@ function Projects({
               )}
             </div>
 
+            {editing && (
+              <input
+                value={p.category ?? ""}
+                onChange={(e) => updateProject(i, { category: e.target.value })}
+                placeholder="Category (e.g. Data Analysis)"
+                className="mt-3 w-full rounded-md border border-emerald-400/40 bg-emerald-400/[0.04] px-2 py-1 text-xs text-white outline-none"
+              />
+            )}
+            {!editing && p.category && (
+              <span className="mt-3 inline-block rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-white/50">
+                {p.category}
+              </span>
+            )}
+
             {/* File attachment + URL */}
             <div className="mt-5 space-y-3 border-t border-white/10 pt-4">
               {p.file ? (
