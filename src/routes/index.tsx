@@ -391,8 +391,10 @@ function Index() {
       <Hero data={data} setData={setData} editing={editing} />
       <About data={data} setData={setData} editing={editing} />
       <Skills data={data} setData={setData} editing={editing} />
+      <ExperienceSection data={data} setData={setData} editing={editing} />
       <Projects data={data} setData={setData} editing={editing} />
       <Certificates data={data} setData={setData} editing={editing} />
+      <Blog data={data} setData={setData} editing={editing} />
       <Contact data={data} setData={setData} editing={editing} />
       {passOpen && (
         <PasscodeModal
