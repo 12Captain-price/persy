@@ -1327,7 +1327,7 @@ function Contact({
 }) {
   return (
     <section id="contact" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
-      <SectionLabel n="§ 05" label="contact" />
+      <SectionLabel n="§ 07" label="contact" />
       <div className="grid gap-12 md:grid-cols-5">
         <div className="md:col-span-2">
           <h2
