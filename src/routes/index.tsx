@@ -506,8 +506,10 @@ function Nav({
       <nav className="hidden gap-6 text-sm text-white/60 lg:flex">
         <a href="#about" className="hover:text-white">about</a>
         <a href="#skills" className="hover:text-white">skills</a>
+        <a href="#experience" className="hover:text-white">experience</a>
         <a href="#projects" className="hover:text-white">projects</a>
         <a href="#certificates" className="hover:text-white">certificates</a>
+        <a href="#blog" className="hover:text-white">blog</a>
         <a href="#contact" className="hover:text-white">contact</a>
       </nav>
       <div className="flex items-center gap-2">
