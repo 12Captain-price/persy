@@ -1457,3 +1457,346 @@ function ContactRow({
     </div>
   );
 }
+
+// ---------- Experience ----------
+
+function ExperienceSection({
+  data,
+  setData,
+  editing,
+}: {
+  data: Data;
+  setData: (u: (d: Data) => Data) => void;
+  editing: boolean;
+}) {
+  const updateExp = (i: number, patch: Partial<Experience>) =>
+    setData((d) => {
+      const next = [...d.experience];
+      next[i] = { ...next[i], ...patch };
+      return { ...d, experience: next };
+    });
+
+  if (!editing && data.experience.length === 0) return null;
+
+  return (
+    <section id="experience" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
+      <SectionLabel n="§ 03" label="experience" />
+      <div className="relative space-y-8 border-l border-white/10 pl-6">
+        {data.experience.map((e, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -8 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.4, delay: i * 0.05 }}
+            className="relative"
+          >
+            <span className="absolute -left-[31px] top-2 h-3 w-3 rounded-full border-2 border-emerald-400 bg-[#0a0a0a]" />
+            {editing ? (
+              <div className="space-y-2 rounded-xl border border-emerald-400/30 bg-emerald-400/[0.03] p-4">
+                <input
+                  value={e.role}
+                  onChange={(ev) => updateExp(i, { role: ev.target.value })}
+                  placeholder="Role"
+                  className="w-full rounded-md border border-white/10 bg-black/40 px-2 py-1 text-sm text-white outline-none"
+                />
+                <input
+                  value={e.org}
+                  onChange={(ev) => updateExp(i, { org: ev.target.value })}
+                  placeholder="Organisation"
+                  className="w-full rounded-md border border-white/10 bg-black/40 px-2 py-1 text-sm text-white outline-none"
+                />
+                <input
+                  value={e.period}
+                  onChange={(ev) => updateExp(i, { period: ev.target.value })}
+                  placeholder="Period (e.g. 2024 — present)"
+                  className="w-full rounded-md border border-white/10 bg-black/40 px-2 py-1 text-xs text-white/80 outline-none"
+                />
+                <textarea
+                  value={e.description}
+                  onChange={(ev) => updateExp(i, { description: ev.target.value })}
+                  placeholder="What you did / learned"
+                  rows={3}
+                  className="w-full resize-y rounded-md border border-white/10 bg-black/40 px-2 py-1 text-sm text-white/80 outline-none"
+                />
+                <button
+                  onClick={() =>
+                    setData((d) => ({
+                      ...d,
+                      experience: d.experience.filter((_, j) => j !== i),
+                    }))
+                  }
+                  className="text-xs text-white/40 hover:text-red-400"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <>
+                <p
+                  className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40"
+                  style={{ fontFamily: "JetBrains Mono, monospace" }}
+                >
+                  {e.period}
+                </p>
+                <h3
+                  className="mt-1 text-lg font-semibold text-white"
+                  style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                >
+                  {e.role}{" "}
+                  <span className="font-normal text-white/50">· {e.org}</span>
+                </h3>
+                <p className="mt-2 text-sm text-white/65">{e.description}</p>
+              </>
+            )}
+          </motion.div>
+        ))}
+
+        {editing && (
+          <button
+            onClick={() =>
+              setData((d) => ({
+                ...d,
+                experience: [
+                  ...d.experience,
+                  { role: "New role", org: "Organisation", period: "Year — Year", description: "What you did." },
+                ],
+              }))
+            }
+            className="flex items-center gap-1 rounded-full border-2 border-dashed border-emerald-400/40 px-4 py-2 text-xs text-emerald-300 hover:bg-emerald-400/5"
+          >
+            <Plus size={14} /> Add experience
+          </button>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ---------- Blog ----------
+
+function Blog({
+  data,
+  setData,
+  editing,
+}: {
+  data: Data;
+  setData: (u: (d: Data) => Data) => void;
+  editing: boolean;
+}) {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const updatePost = (i: number, patch: Partial<Post>) =>
+    setData((d) => {
+      const next = [...d.posts];
+      next[i] = { ...next[i], ...patch };
+      return { ...d, posts: next };
+    });
+
+  if (!editing && data.posts.length === 0) return null;
+
+  return (
+    <section id="blog" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
+      <SectionLabel n="§ 06" label="writing" />
+      <div className="grid gap-5 md:grid-cols-2">
+        {data.posts.map((post, i) => (
+          <article
+            key={i}
+            className="group rounded-2xl border border-white/10 bg-white/[0.02] p-6 transition hover:border-white/30 hover:bg-white/[0.04]"
+          >
+            {editing ? (
+              <div className="space-y-2">
+                <input
+                  value={post.title}
+                  onChange={(e) => updatePost(i, { title: e.target.value })}
+                  placeholder="Title"
+                  className="w-full rounded-md border border-emerald-400/40 bg-emerald-400/[0.04] px-2 py-1 text-lg font-semibold text-white outline-none"
+                />
+                <input
+                  value={post.date}
+                  onChange={(e) => updatePost(i, { date: e.target.value })}
+                  placeholder="YYYY-MM-DD"
+                  className="w-full rounded-md border border-emerald-400/40 bg-emerald-400/[0.04] px-2 py-1 text-xs text-white outline-none"
+                />
+                <textarea
+                  value={post.excerpt}
+                  onChange={(e) => updatePost(i, { excerpt: e.target.value })}
+                  placeholder="Short excerpt"
+                  rows={2}
+                  className="w-full resize-y rounded-md border border-emerald-400/40 bg-emerald-400/[0.04] px-2 py-1 text-sm text-white/80 outline-none"
+                />
+                <textarea
+                  value={post.body}
+                  onChange={(e) => updatePost(i, { body: e.target.value })}
+                  placeholder="Full post body"
+                  rows={6}
+                  className="w-full resize-y rounded-md border border-emerald-400/40 bg-emerald-400/[0.04] px-2 py-1 text-sm text-white/80 outline-none"
+                />
+                <button
+                  onClick={() =>
+                    setData((d) => ({
+                      ...d,
+                      posts: d.posts.filter((_, j) => j !== i),
+                    }))
+                  }
+                  className="text-xs text-white/40 hover:text-red-400"
+                >
+                  Remove post
+                </button>
+              </div>
+            ) : (
+              <>
+                <p
+                  className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40"
+                  style={{ fontFamily: "JetBrains Mono, monospace" }}
+                >
+                  {post.date}
+                </p>
+                <h3
+                  className="mt-2 text-xl font-semibold text-white"
+                  style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                >
+                  {post.title}
+                </h3>
+                <p className="mt-3 text-sm text-white/65">{post.excerpt}</p>
+                <button
+                  onClick={() => setOpenIdx(i)}
+                  className="mt-4 text-xs font-medium text-emerald-300 hover:text-emerald-200"
+                >
+                  Read more →
+                </button>
+              </>
+            )}
+          </article>
+        ))}
+
+        {editing && (
+          <button
+            onClick={() =>
+              setData((d) => ({
+                ...d,
+                posts: [
+                  {
+                    title: "New post",
+                    date: new Date().toISOString().slice(0, 10),
+                    excerpt: "Short summary…",
+                    body: "Write your post here.",
+                  },
+                  ...d.posts,
+                ],
+              }))
+            }
+            className="flex min-h-[180px] items-center justify-center rounded-2xl border-2 border-dashed border-emerald-400/40 text-sm text-emerald-300 hover:bg-emerald-400/5"
+          >
+            <Plus size={16} className="mr-1" /> Add post
+          </button>
+        )}
+      </div>
+
+      {openIdx !== null && data.posts[openIdx] && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
+          onClick={() => setOpenIdx(null)}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/15 bg-[#0d0d0d] p-8"
+          >
+            <button
+              onClick={() => setOpenIdx(null)}
+              className="absolute right-4 top-4 rounded-md p-1.5 text-white/50 hover:bg-white/10 hover:text-white"
+            >
+              <X size={16} />
+            </button>
+            <p
+              className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40"
+              style={{ fontFamily: "JetBrains Mono, monospace" }}
+            >
+              {data.posts[openIdx].date}
+            </p>
+            <h2
+              className="mt-3 text-3xl font-bold tracking-tight text-white"
+              style={{ fontFamily: "Space Grotesk, sans-serif" }}
+            >
+              {data.posts[openIdx].title}
+            </h2>
+            <div className="mt-6 whitespace-pre-wrap text-[15px] leading-relaxed text-white/75">
+              {data.posts[openIdx].body}
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ---------- Contact form ----------
+
+function ContactForm({ email }: { email: string }) {
+  const [name, setName] = useState("");
+  const [from, setFrom] = useState("");
+  const [message, setMessage] = useState("");
+  const [sent, setSent] = useState(false);
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !message.trim()) return;
+    const subject = encodeURIComponent(`Portfolio message from ${name}`);
+    const body = encodeURIComponent(
+      `From: ${name}${from ? ` <${from}>` : ""}\n\n${message}`,
+    );
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    setSent(true);
+  };
+
+  return (
+    <form
+      onSubmit={onSubmit}
+      className="rounded-xl border border-white/10 bg-white/[0.02] p-4"
+    >
+      <div
+        className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-white/50"
+        style={{ fontFamily: "JetBrains Mono, monospace" }}
+      >
+        Send a message
+      </div>
+      <div className="space-y-2">
+        <input
+          required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          maxLength={100}
+          placeholder="Your name"
+          className="w-full rounded-md border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-emerald-400/60"
+        />
+        <input
+          type="email"
+          value={from}
+          onChange={(e) => setFrom(e.target.value)}
+          maxLength={255}
+          placeholder="Your email (optional)"
+          className="w-full rounded-md border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-emerald-400/60"
+        />
+        <textarea
+          required
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          maxLength={1000}
+          rows={4}
+          placeholder="Your message"
+          className="w-full resize-y rounded-md border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-emerald-400/60"
+        />
+        <button
+          type="submit"
+          className="w-full rounded-full bg-emerald-400 px-4 py-2 text-sm font-medium text-black transition hover:bg-emerald-300"
+        >
+          {sent ? "Opening your email…" : "Send via email"}
+        </button>
+        <p className="text-[11px] text-white/40">
+          This opens your email app with the message pre-filled.
+        </p>
+      </div>
+    </form>
+  );
+}
