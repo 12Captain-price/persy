@@ -975,11 +975,37 @@ function Projects({
       return { ...d, projects: next };
     });
 
+  const categories = Array.from(
+    new Set(data.projects.map((p) => p.category).filter(Boolean) as string[]),
+  );
+  const [filter, setFilter] = useState<string>("All");
+  const visible = data.projects
+    .map((p, i) => ({ p, i }))
+    .filter(({ p }) => filter === "All" || p.category === filter);
+
   return (
     <section id="projects" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
       <SectionLabel n="§ 04" label="projects" />
+      {categories.length > 0 && (
+        <div className="mb-8 flex flex-wrap gap-2">
+          {["All", ...categories].map((c) => (
+            <button
+              key={c}
+              onClick={() => setFilter(c)}
+              className={
+                "rounded-full border px-3 py-1 text-xs transition " +
+                (filter === c
+                  ? "border-emerald-400 bg-emerald-400 text-black"
+                  : "border-white/15 text-white/60 hover:border-white/40 hover:text-white")
+              }
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="grid gap-6 md:grid-cols-2">
-        {data.projects.map((p, i) => (
+        {visible.map(({ p, i }) => (
           <motion.article
             key={i}
             initial={{ opacity: 0, y: 24 }}
