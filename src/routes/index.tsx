@@ -762,6 +762,37 @@ function Hero({
             >
               See projects →
             </a>
+            {data.cv && <SecureViewer file={data.cv} label="View CV" />}
+            {editing && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => cvRef.current?.click()}
+                  disabled={cvBusy}
+                  className="rounded-full border border-emerald-400/40 px-4 py-2 text-xs text-emerald-300 hover:bg-emerald-400/10 disabled:opacity-50"
+                >
+                  {cvBusy ? "Uploading…" : data.cv ? "Change CV" : "Upload CV"}
+                </button>
+                {data.cv && (
+                  <button
+                    onClick={() => setData((d) => ({ ...d, cv: null }))}
+                    className="rounded-full border border-white/15 px-3 py-2 text-xs text-white/60 hover:bg-white/5"
+                  >
+                    Remove
+                  </button>
+                )}
+                <input
+                  ref={cvRef}
+                  type="file"
+                  accept="application/pdf,image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) onPickCv(f);
+                    e.target.value = "";
+                  }}
+                />
+              </div>
+            )}
           </motion.div>
         </div>
       </div>
