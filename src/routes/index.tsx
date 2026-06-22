@@ -29,18 +29,32 @@ import "@fontsource/inter/500.css";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Persistance Chikanya" },
+      { title: "Persistance Chikanya — Data, Analytics & Web" },
       {
         name: "description",
         content:
-          "Persistance Chikanya — aspiring data scientist, data engineer, analyst and web developer. Projects, skills and contact.",
+          "Portfolio of Persistance Chikanya — aspiring data scientist & web developer. Python, SQL, React, Power BI projects and certifications.",
       },
-      { property: "og:title", content: "Persistance Chikanya — Portfolio" },
+      { property: "og:title", content: "Persistance Chikanya — Data, Analytics & Web" },
       {
         property: "og:description",
         content:
           "Aspiring data scientist & web developer. Python, SQL, React, Power BI.",
       },
+      { property: "og:url", content: "https://persy.lovable.app" },
+      { property: "og:image", content: "https://persy.lovable.app/og-image.jpg" },
+      { property: "og:image:width", content: "1216" },
+      { property: "og:image:height", content: "640" },
+      { name: "twitter:title", content: "Persistance Chikanya — Data, Analytics & Web" },
+      {
+        name: "twitter:description",
+        content:
+          "Aspiring data scientist & web developer. Python, SQL, React, Power BI.",
+      },
+      { name: "twitter:image", content: "https://persy.lovable.app/og-image.jpg" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://persy.lovable.app" },
     ],
   }),
   component: Index,
@@ -86,6 +100,7 @@ type Data = {
   linkedin: string;
   github: string;
   avatar: string;
+  cv?: { name: string; url: string } | null;
   skills: Skill[];
   projects: Project[];
   certificates: Certificate[];
@@ -108,6 +123,7 @@ const DEFAULTS: Data = {
     "https://www.linkedin.com/in/persistance-tinevimbo-chikanya-169916350",
   github: "https://github.com/12Captain-price",
   avatar: "",
+  cv: null,
   skills: [
     { name: "Python", level: "core" },
     { name: "SQL", level: "core" },
@@ -606,13 +622,22 @@ function Hero({
   editing: boolean;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const cvRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [cvBusy, setCvBusy] = useState(false);
 
   const onPickAvatar = async (file: File) => {
     setBusy(true);
     const ref = await uploadFile(file, "avatars");
     setBusy(false);
     if (ref) setData((d) => ({ ...d, avatar: ref.url }));
+  };
+
+  const onPickCv = async (file: File) => {
+    setCvBusy(true);
+    const ref = await uploadFile(file, "cv");
+    setCvBusy(false);
+    if (ref) setData((d) => ({ ...d, cv: { name: ref.name, url: ref.url } }));
   };
 
   return (
@@ -751,6 +776,37 @@ function Hero({
             >
               See projects →
             </a>
+            {data.cv && <SecureViewer file={data.cv} label="View CV" />}
+            {editing && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => cvRef.current?.click()}
+                  disabled={cvBusy}
+                  className="rounded-full border border-emerald-400/40 px-4 py-2 text-xs text-emerald-300 hover:bg-emerald-400/10 disabled:opacity-50"
+                >
+                  {cvBusy ? "Uploading…" : data.cv ? "Change CV" : "Upload CV"}
+                </button>
+                {data.cv && (
+                  <button
+                    onClick={() => setData((d) => ({ ...d, cv: null }))}
+                    className="rounded-full border border-white/15 px-3 py-2 text-xs text-white/60 hover:bg-white/5"
+                  >
+                    Remove
+                  </button>
+                )}
+                <input
+                  ref={cvRef}
+                  type="file"
+                  accept="application/pdf,image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) onPickCv(f);
+                    e.target.value = "";
+                  }}
+                />
+              </div>
+            )}
           </motion.div>
         </div>
       </div>
