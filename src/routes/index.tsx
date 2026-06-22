@@ -29,18 +29,32 @@ import "@fontsource/inter/500.css";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Persistance Chikanya" },
+      { title: "Persistance Chikanya — Data, Analytics & Web" },
       {
         name: "description",
         content:
-          "Persistance Chikanya — aspiring data scientist, data engineer, analyst and web developer. Projects, skills and contact.",
+          "Portfolio of Persistance Chikanya — aspiring data scientist & web developer. Python, SQL, React, Power BI projects and certifications.",
       },
-      { property: "og:title", content: "Persistance Chikanya — Portfolio" },
+      { property: "og:title", content: "Persistance Chikanya — Data, Analytics & Web" },
       {
         property: "og:description",
         content:
           "Aspiring data scientist & web developer. Python, SQL, React, Power BI.",
       },
+      { property: "og:url", content: "https://persy.lovable.app" },
+      { property: "og:image", content: "https://persy.lovable.app/og-image.jpg" },
+      { property: "og:image:width", content: "1216" },
+      { property: "og:image:height", content: "640" },
+      { name: "twitter:title", content: "Persistance Chikanya — Data, Analytics & Web" },
+      {
+        name: "twitter:description",
+        content:
+          "Aspiring data scientist & web developer. Python, SQL, React, Power BI.",
+      },
+      { name: "twitter:image", content: "https://persy.lovable.app/og-image.jpg" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://persy.lovable.app" },
     ],
   }),
   component: Index,
