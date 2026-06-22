@@ -242,7 +242,7 @@ function SecureViewer({ label = "View" }: { file?: { name: string; url: string }
             initial={{ opacity: 0, scale: 0.94, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.25 }}
-            className="relative w-full max-w-md overflow-hidden rounded-2xl border border-emerald-400/30 bg-gradient-to-br from-[#0d1612] via-[#0a0a0a] to-[#0d1612] p-7 shadow-[0_20px_80px_-20px_rgba(16,185,129,0.4)]"
+            className="secure-modal-panel relative w-full max-w-md overflow-hidden rounded-2xl border border-emerald-400/30 bg-gradient-to-br from-[#0d1612] via-[#0a0a0a] to-[#0d1612] p-7 shadow-[0_20px_80px_-20px_rgba(16,185,129,0.4)]"
           >
             {/* decorative glow */}
             <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-400/20 blur-3xl" />
