@@ -608,13 +608,22 @@ function Hero({
   editing: boolean;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const cvRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [cvBusy, setCvBusy] = useState(false);
 
   const onPickAvatar = async (file: File) => {
     setBusy(true);
     const ref = await uploadFile(file, "avatars");
     setBusy(false);
     if (ref) setData((d) => ({ ...d, avatar: ref.url }));
+  };
+
+  const onPickCv = async (file: File) => {
+    setCvBusy(true);
+    const ref = await uploadFile(file, "cv");
+    setCvBusy(false);
+    if (ref) setData((d) => ({ ...d, cv: { name: ref.name, url: ref.url } }));
   };
 
   return (
