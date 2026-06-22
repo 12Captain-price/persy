@@ -109,6 +109,7 @@ const DEFAULTS: Data = {
     "https://www.linkedin.com/in/persistance-tinevimbo-chikanya-169916350",
   github: "https://github.com/12Captain-price",
   avatar: "",
+  cv: null,
   skills: [
     { name: "Python", level: "core" },
     { name: "SQL", level: "core" },
