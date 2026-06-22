@@ -214,4 +214,19 @@
 .theme-light .hover\:text-emerald-200:hover,
 .theme-light .hover\:text-emerald-300:hover { color: #065f46 !important; }
 
+/* Secure viewer modal panel in light theme — override the dark gradient */
+.theme-light .secure-modal-panel {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7f6 50%, #ffffff 100%) !important;
+  border-color: rgba(4, 120, 87, 0.35) !important;
+  box-shadow: 0 20px 80px -20px rgba(16, 185, 129, 0.25) !important;
+}
+.theme-light .secure-modal-panel h3,
+.theme-light .secure-modal-panel p,
+.theme-light .secure-modal-panel a p { color: #0a0a0a !important; }
+.theme-light .secure-modal-panel .text-white\/70,
+.theme-light .secure-modal-panel .text-white\/40,
+.theme-light .secure-modal-panel .text-white\/30,
+.theme-light .secure-modal-panel .text-white\/50 { color: rgba(10,10,10,0.65) !important; }
+
+
 
