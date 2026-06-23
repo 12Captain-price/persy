@@ -228,5 +228,31 @@
 .theme-light .secure-modal-panel .text-white\/30,
 .theme-light .secure-modal-panel .text-white\/50 { color: rgba(10,10,10,0.65) !important; }
 
+/* Contact form modal in light theme */
+.theme-light .contact-modal-panel {
+  background: #ffffff !important;
+  border-color: rgba(4,120,87,0.35) !important;
+  box-shadow: 0 20px 80px -20px rgba(16,185,129,0.25) !important;
+}
+.theme-light .contact-modal-panel h3,
+.theme-light .contact-modal-panel p { color: #0a0a0a !important; }
+.theme-light .contact-modal-panel .text-white,
+.theme-light .contact-modal-panel input,
+.theme-light .contact-modal-panel textarea { color: #0a0a0a !important; }
+.theme-light .contact-modal-panel input,
+.theme-light .contact-modal-panel textarea {
+  background-color: #f5f3ee !important;
+  border-color: rgba(10,10,10,0.15) !important;
+}
+.theme-light .contact-modal-panel input::placeholder,
+.theme-light .contact-modal-panel textarea::placeholder { color: rgba(10,10,10,0.45) !important; }
+.theme-light .contact-modal-panel .text-white\/60,
+.theme-light .contact-modal-panel .text-white\/55,
+.theme-light .contact-modal-panel .text-white\/50,
+.theme-light .contact-modal-panel .text-white\/40 { color: rgba(10,10,10,0.6) !important; }
+.theme-light .contact-modal-panel button[type="submit"] {
+  color: #ffffff !important;
+}
+
 
 
