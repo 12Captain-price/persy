@@ -1850,7 +1850,7 @@ function ContactForm({ email }: { email: string }) {
             transition={{ duration: 0.22 }}
             onClick={(e) => e.stopPropagation()}
             onSubmit={onSubmit}
-            className="relative w-full max-w-md overflow-hidden rounded-2xl border border-emerald-400/30 bg-[#0d1612] p-7 shadow-[0_20px_80px_-20px_rgba(16,185,129,0.4)]"
+            className="contact-modal-panel relative w-full max-w-md overflow-hidden rounded-2xl border border-emerald-400/30 bg-[#0d1612] p-7 shadow-[0_20px_80px_-20px_rgba(16,185,129,0.4)]"
           >
             <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-400/20 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-20 -left-10 h-48 w-48 rounded-full bg-cyan-400/10 blur-3xl" />
