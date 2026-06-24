@@ -104,7 +104,7 @@ type Data = {
   linkedin: string;
   github: string;
   avatar: string;
-  cv?: { name: string; url: string } | null;
+  cv?: { name: string; url: string; locked?: boolean } | null;
   skills: Skill[];
   projects: Project[];
   certificates: Certificate[];
