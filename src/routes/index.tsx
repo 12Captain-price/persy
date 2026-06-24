@@ -879,6 +879,14 @@ function Hero({
                   {cvBusy ? "Uploading…" : data.cv ? "Change CV" : "Upload CV"}
                 </button>
                 {data.cv && (
+                  <LockToggle
+                    locked={data.cv.locked !== false}
+                    onChange={(next) =>
+                      setData((d) => (d.cv ? { ...d, cv: { ...d.cv, locked: next } } : d))
+                    }
+                  />
+                )}
+                {data.cv && (
                   <button
                     onClick={() => setData((d) => ({ ...d, cv: null }))}
                     className="rounded-full border border-white/15 px-3 py-2 text-xs text-white/60 hover:bg-white/5"
