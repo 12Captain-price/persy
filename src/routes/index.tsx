@@ -68,7 +68,7 @@ export const Route = createFileRoute("/")({
 
 type Level = "core" | "learning" | "some";
 type Skill = { name: string; level: Level };
-type FileRef = { name: string; url: string } | null;
+type FileRef = { name: string; url: string; locked?: boolean } | null;
 type Project = {
   tag: string;
   title: string;
