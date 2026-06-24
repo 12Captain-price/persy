@@ -233,6 +233,24 @@ async function uploadFile(file: File, folder: string): Promise<FileRef> {
 
 function SecureViewer({ file, label = "View" }: { file?: { name: string; url: string; locked?: boolean } | null; label?: string }) {
   const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const locked = file?.locked !== false;
+  const isImage = !!file?.name?.match(/\.(png|jpe?g|gif|webp|svg)$/i);
+
+  const onShare = async () => {
+    if (!file) return;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: file.name, url: file.url });
+        return;
+      }
+    } catch {}
+    try {
+      await navigator.clipboard.writeText(file.url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  };
 
   useEffect(() => {
     if (!open) return;
