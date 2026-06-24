@@ -1247,6 +1247,14 @@ function Projects({
                   <span className="flex-1 truncate text-xs text-white/80">{p.file.name}</span>
                   <SecureViewer file={p.file} />
                   {editing && (
+                    <LockToggle
+                      locked={p.file.locked !== false}
+                      onChange={(next) =>
+                        updateProject(i, { file: { ...p.file!, locked: next } })
+                      }
+                    />
+                  )}
+                  {editing && (
                     <button
                       onClick={() => updateProject(i, { file: null })}
                       className="text-white/40 hover:text-red-400"
