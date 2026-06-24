@@ -1425,6 +1425,12 @@ function Certificates({
                   {c.file && (
                     <div className="flex items-center gap-2 text-xs text-white/60">
                       <span className="flex-1 truncate">{c.file.name}</span>
+                      <LockToggle
+                        locked={c.file.locked !== false}
+                        onChange={(next) =>
+                          updateCert(i, { file: { ...c.file!, locked: next } })
+                        }
+                      />
                       <button
                         onClick={() => updateCert(i, { file: null })}
                         className="text-white/40 hover:text-red-400"
