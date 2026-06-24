@@ -226,7 +226,7 @@ async function uploadFile(file: File, folder: string): Promise<FileRef> {
     alert("Could not create link for file");
     return null;
   }
-  return { name: file.name, url: data.signedUrl };
+  return { name: file.name, url: data.signedUrl, locked: true };
 }
 
 // ---------- Secure file viewer ----------
