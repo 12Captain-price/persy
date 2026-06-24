@@ -231,7 +231,7 @@ async function uploadFile(file: File, folder: string): Promise<FileRef> {
 
 // ---------- Secure file viewer ----------
 
-function SecureViewer({ label = "View" }: { file?: { name: string; url: string }; label?: string }) {
+function SecureViewer({ file, label = "View" }: { file?: { name: string; url: string; locked?: boolean } | null; label?: string }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
