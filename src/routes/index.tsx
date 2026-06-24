@@ -14,8 +14,12 @@ import {
   X,
   ExternalLink,
   Lock,
+  Unlock,
   Sun,
   Moon,
+  Download,
+  Share2,
+  Check,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import "@fontsource/space-grotesk/400.css";
@@ -64,7 +68,7 @@ export const Route = createFileRoute("/")({
 
 type Level = "core" | "learning" | "some";
 type Skill = { name: string; level: Level };
-type FileRef = { name: string; url: string } | null;
+type FileRef = { name: string; url: string; locked?: boolean } | null;
 type Project = {
   tag: string;
   title: string;
@@ -100,7 +104,7 @@ type Data = {
   linkedin: string;
   github: string;
   avatar: string;
-  cv?: { name: string; url: string } | null;
+  cv?: { name: string; url: string; locked?: boolean } | null;
   skills: Skill[];
   projects: Project[];
   certificates: Certificate[];
@@ -222,13 +226,31 @@ async function uploadFile(file: File, folder: string): Promise<FileRef> {
     alert("Could not create link for file");
     return null;
   }
-  return { name: file.name, url: data.signedUrl };
+  return { name: file.name, url: data.signedUrl, locked: true };
 }
 
 // ---------- Secure file viewer ----------
 
-function SecureViewer({ label = "View" }: { file?: { name: string; url: string }; label?: string }) {
+function SecureViewer({ file, label = "View" }: { file?: { name: string; url: string; locked?: boolean } | null; label?: string }) {
   const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const locked = file?.locked !== false;
+  const isImage = !!file?.name?.match(/\.(png|jpe?g|gif|webp|svg)$/i);
+
+  const onShare = async () => {
+    if (!file) return;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: file.name, url: file.url });
+        return;
+      }
+    } catch {}
+    try {
+      await navigator.clipboard.writeText(file.url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -252,7 +274,7 @@ function SecureViewer({ label = "View" }: { file?: { name: string; url: string }
       >
         {label}
       </button>
-      {open && (
+      {open && locked && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-md">
           <motion.div
             initial={{ opacity: 0, scale: 0.94, y: 12 }}
@@ -260,7 +282,6 @@ function SecureViewer({ label = "View" }: { file?: { name: string; url: string }
             transition={{ duration: 0.25 }}
             className="secure-modal-panel relative w-full max-w-md overflow-hidden rounded-2xl border border-emerald-400/30 bg-gradient-to-br from-[#0d1612] via-[#0a0a0a] to-[#0d1612] p-7 shadow-[0_20px_80px_-20px_rgba(16,185,129,0.4)]"
           >
-            {/* decorative glow */}
             <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-400/20 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-20 -left-10 h-48 w-48 rounded-full bg-cyan-400/10 blur-3xl" />
 
@@ -320,9 +341,80 @@ function SecureViewer({ label = "View" }: { file?: { name: string; url: string }
           </motion.div>
         </div>
       )}
+
+      {open && !locked && file && (
+        <div className="fixed inset-0 z-[100] flex flex-col bg-black/95 p-4 backdrop-blur-md">
+          <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 pb-3">
+            <div className="flex min-w-0 items-center gap-2 text-white">
+              <FileText size={16} className="shrink-0 text-emerald-300" />
+              <span className="truncate text-sm">{file.name}</span>
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
+              <a
+                href={file.url}
+                download={file.name}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-md border border-emerald-400/40 bg-emerald-400/10 px-3 py-1.5 text-xs font-medium text-emerald-200 hover:bg-emerald-400/20"
+              >
+                <Download size={14} /> Download
+              </a>
+              <button
+                onClick={onShare}
+                className="inline-flex items-center gap-1.5 rounded-md border border-white/15 bg-white/[0.05] px-3 py-1.5 text-xs font-medium text-white hover:bg-white/10"
+              >
+                {copied ? <Check size={14} /> : <Share2 size={14} />}
+                {copied ? "Link copied" : "Share"}
+              </button>
+              <button
+                onClick={() => setOpen(false)}
+                className="rounded-md p-1.5 text-white/60 transition hover:bg-white/10 hover:text-white"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          </div>
+          <div className="mx-auto flex w-full max-w-5xl flex-1 overflow-hidden rounded-xl border border-white/10 bg-black">
+            {isImage ? (
+              <img src={file.url} alt={file.name} className="m-auto max-h-full max-w-full object-contain" />
+            ) : (
+              <iframe src={file.url} title={file.name} className="h-full w-full" />
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
+
+// ---------- Lock toggle (edit mode) ----------
+
+function LockToggle({
+  locked,
+  onChange,
+}: {
+  locked: boolean;
+  onChange: (next: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!locked)}
+      title={locked ? "Locked — visitors see the private message. Click to unlock." : "Unlocked — visitors can view, download & share. Click to lock."}
+      className={
+        "inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-medium transition " +
+        (locked
+          ? "border-amber-400/40 bg-amber-400/10 text-amber-200 hover:bg-amber-400/20"
+          : "border-emerald-400/40 bg-emerald-400/10 text-emerald-200 hover:bg-emerald-400/20")
+      }
+    >
+      {locked ? <Lock size={11} /> : <Unlock size={11} />}
+      {locked ? "Locked" : "Unlocked"}
+    </button>
+  );
+}
+
 
 // ---------- Data hook (cloud-backed, with localStorage fallback) ----------
 
@@ -787,6 +879,14 @@ function Hero({
                   {cvBusy ? "Uploading…" : data.cv ? "Change CV" : "Upload CV"}
                 </button>
                 {data.cv && (
+                  <LockToggle
+                    locked={data.cv.locked !== false}
+                    onChange={(next) =>
+                      setData((d) => (d.cv ? { ...d, cv: { ...d.cv, locked: next } } : d))
+                    }
+                  />
+                )}
+                {data.cv && (
                   <button
                     onClick={() => setData((d) => ({ ...d, cv: null }))}
                     className="rounded-full border border-white/15 px-3 py-2 text-xs text-white/60 hover:bg-white/5"
@@ -1147,6 +1247,14 @@ function Projects({
                   <span className="flex-1 truncate text-xs text-white/80">{p.file.name}</span>
                   <SecureViewer file={p.file} />
                   {editing && (
+                    <LockToggle
+                      locked={p.file.locked !== false}
+                      onChange={(next) =>
+                        updateProject(i, { file: { ...p.file!, locked: next } })
+                      }
+                    />
+                  )}
+                  {editing && (
                     <button
                       onClick={() => updateProject(i, { file: null })}
                       className="text-white/40 hover:text-red-400"
@@ -1317,6 +1425,12 @@ function Certificates({
                   {c.file && (
                     <div className="flex items-center gap-2 text-xs text-white/60">
                       <span className="flex-1 truncate">{c.file.name}</span>
+                      <LockToggle
+                        locked={c.file.locked !== false}
+                        onChange={(next) =>
+                          updateCert(i, { file: { ...c.file!, locked: next } })
+                        }
+                      />
                       <button
                         onClick={() => updateCert(i, { file: null })}
                         className="text-white/40 hover:text-red-400"
