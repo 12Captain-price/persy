@@ -388,6 +388,34 @@ function SecureViewer({ file, label = "View" }: { file?: { name: string; url: st
   );
 }
 
+// ---------- Lock toggle (edit mode) ----------
+
+function LockToggle({
+  locked,
+  onChange,
+}: {
+  locked: boolean;
+  onChange: (next: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!locked)}
+      title={locked ? "Locked — visitors see the private message. Click to unlock." : "Unlocked — visitors can view, download & share. Click to lock."}
+      className={
+        "inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-medium transition " +
+        (locked
+          ? "border-amber-400/40 bg-amber-400/10 text-amber-200 hover:bg-amber-400/20"
+          : "border-emerald-400/40 bg-emerald-400/10 text-emerald-200 hover:bg-emerald-400/20")
+      }
+    >
+      {locked ? <Lock size={11} /> : <Unlock size={11} />}
+      {locked ? "Locked" : "Unlocked"}
+    </button>
+  );
+}
+
+
 // ---------- Data hook (cloud-backed, with localStorage fallback) ----------
 
 function useData() {
