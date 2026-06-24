@@ -274,7 +274,7 @@ function SecureViewer({ file, label = "View" }: { file?: { name: string; url: st
       >
         {label}
       </button>
-      {open && (
+      {open && locked && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-md">
           <motion.div
             initial={{ opacity: 0, scale: 0.94, y: 12 }}
@@ -282,7 +282,6 @@ function SecureViewer({ file, label = "View" }: { file?: { name: string; url: st
             transition={{ duration: 0.25 }}
             className="secure-modal-panel relative w-full max-w-md overflow-hidden rounded-2xl border border-emerald-400/30 bg-gradient-to-br from-[#0d1612] via-[#0a0a0a] to-[#0d1612] p-7 shadow-[0_20px_80px_-20px_rgba(16,185,129,0.4)]"
           >
-            {/* decorative glow */}
             <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-400/20 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-20 -left-10 h-48 w-48 rounded-full bg-cyan-400/10 blur-3xl" />
 
@@ -340,6 +339,49 @@ function SecureViewer({ file, label = "View" }: { file?: { name: string; url: st
               </p>
             </div>
           </motion.div>
+        </div>
+      )}
+
+      {open && !locked && file && (
+        <div className="fixed inset-0 z-[100] flex flex-col bg-black/95 p-4 backdrop-blur-md">
+          <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 pb-3">
+            <div className="flex min-w-0 items-center gap-2 text-white">
+              <FileText size={16} className="shrink-0 text-emerald-300" />
+              <span className="truncate text-sm">{file.name}</span>
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
+              <a
+                href={file.url}
+                download={file.name}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-md border border-emerald-400/40 bg-emerald-400/10 px-3 py-1.5 text-xs font-medium text-emerald-200 hover:bg-emerald-400/20"
+              >
+                <Download size={14} /> Download
+              </a>
+              <button
+                onClick={onShare}
+                className="inline-flex items-center gap-1.5 rounded-md border border-white/15 bg-white/[0.05] px-3 py-1.5 text-xs font-medium text-white hover:bg-white/10"
+              >
+                {copied ? <Check size={14} /> : <Share2 size={14} />}
+                {copied ? "Link copied" : "Share"}
+              </button>
+              <button
+                onClick={() => setOpen(false)}
+                className="rounded-md p-1.5 text-white/60 transition hover:bg-white/10 hover:text-white"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          </div>
+          <div className="mx-auto flex w-full max-w-5xl flex-1 overflow-hidden rounded-xl border border-white/10 bg-black">
+            {isImage ? (
+              <img src={file.url} alt={file.name} className="m-auto max-h-full max-w-full object-contain" />
+            ) : (
+              <iframe src={file.url} title={file.name} className="h-full w-full" />
+            )}
+          </div>
         </div>
       )}
     </>
