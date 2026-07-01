@@ -2411,3 +2411,682 @@ function ContactForm({ email }: { email: string }) {
     </>
   );
 }
+
+// ============================================================
+// ==============  PC NEXUS COMPANY SECTIONS  =================
+// ============================================================
+
+// ---------- Small helpers ----------
+
+function SectionHeader({
+  eyebrow,
+  title,
+  description,
+  onEyebrow,
+  onTitle,
+  onDescription,
+  editing,
+  align = "center",
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  onEyebrow?: (v: string) => void;
+  onTitle?: (v: string) => void;
+  onDescription?: (v: string) => void;
+  editing: boolean;
+  align?: "center" | "left";
+}) {
+  return (
+    <div className={"mb-14 " + (align === "center" ? "mx-auto max-w-2xl text-center" : "max-w-2xl")}>
+      <div className={"inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/[0.06] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-emerald-300"}>
+        <Sparkles size={11} />
+        {editing && onEyebrow ? (
+          <EditableText value={eyebrow} onChange={onEyebrow} editing={editing} className="bg-transparent text-emerald-300" />
+        ) : (
+          <span>{eyebrow}</span>
+        )}
+      </div>
+      <h2
+        className="mt-5 text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl lg:text-5xl"
+        style={{ fontFamily: "Space Grotesk, sans-serif" }}
+      >
+        {editing && onTitle ? (
+          <EditableText value={title} onChange={onTitle} editing={editing} multiline className="text-2xl w-full" />
+        ) : (
+          title
+        )}
+      </h2>
+      {(description || editing) && (
+        <div className="mt-4 text-white/65 md:text-lg">
+          {editing && onDescription ? (
+            <EditableText value={description} onChange={onDescription} editing={editing} multiline as="p" />
+          ) : (
+            <p>{description}</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function IconPicker({ value, onChange }: { value: IconName; onChange: (v: IconName) => void }) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value as IconName)}
+      className="rounded-md border border-emerald-400/40 bg-black px-2 py-1 text-xs text-emerald-200"
+    >
+      {ICON_NAMES.map((n) => (
+        <option key={n} value={n}>{n}</option>
+      ))}
+    </select>
+  );
+}
+
+function AddRemoveBar({
+  onAdd,
+  onRemove,
+  addLabel = "Add item",
+}: {
+  onAdd: () => void;
+  onRemove?: () => void;
+  addLabel?: string;
+}) {
+  return (
+    <div className="mt-6 flex flex-wrap gap-2">
+      <button onClick={onAdd} className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-4 py-2 text-xs font-medium text-emerald-200 hover:bg-emerald-400/20">
+        <Plus size={12} /> {addLabel}
+      </button>
+      {onRemove && (
+        <button onClick={onRemove} className="inline-flex items-center gap-1.5 rounded-full border border-red-400/40 bg-red-400/10 px-4 py-2 text-xs font-medium text-red-200 hover:bg-red-400/20">
+          <Trash2 size={12} /> Remove last
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ---------- 02 Services ----------
+
+function Services({ data, setData, editing }: { data: Data; setData: (u: (d: Data) => Data) => void; editing: boolean }) {
+  const updateService = (i: number, patch: Partial<Service>) =>
+    setData((d) => ({ ...d, services: d.services.map((s, idx) => (idx === i ? { ...s, ...patch } : s)) }));
+  const addService = () =>
+    setData((d) => ({ ...d, services: [...d.services, { icon: "Sparkles", title: "New Service", description: "Describe the service.", features: ["Feature 1"] }] }));
+  const removeService = (i: number) =>
+    setData((d) => ({ ...d, services: d.services.filter((_, idx) => idx !== i) }));
+
+  return (
+    <section id="services" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
+      <SectionHeader
+        eyebrow="§ 02 · Services"
+        title={data.servicesTitle}
+        description={data.servicesDescription}
+        onEyebrow={undefined}
+        onTitle={(v) => setData((d) => ({ ...d, servicesTitle: v }))}
+        onDescription={(v) => setData((d) => ({ ...d, servicesDescription: v }))}
+        editing={editing}
+      />
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {data.services.map((s, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.5, delay: i * 0.08 }}
+            whileHover={{ y: -6 }}
+            className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm transition hover:border-emerald-400/40"
+          >
+            <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-emerald-400/10 opacity-0 blur-3xl transition group-hover:opacity-100" />
+            <div className="relative">
+              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10 text-emerald-300">
+                <DynIcon name={s.icon} size={22} />
+              </div>
+              {editing && <div className="mb-2"><IconPicker value={s.icon} onChange={(v) => updateService(i, { icon: v })} /></div>}
+              <h3 className="mb-2 text-lg font-semibold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                <EditableText value={s.title} onChange={(v) => updateService(i, { title: v })} editing={editing} />
+              </h3>
+              <div className="mb-4 text-sm text-white/65">
+                <EditableText value={s.description} onChange={(v) => updateService(i, { description: v })} editing={editing} multiline as="p" />
+              </div>
+              <ul className="space-y-1.5 text-xs text-white/70">
+                {s.features.map((f, fi) => (
+                  <li key={fi} className="flex items-start gap-2">
+                    <Check size={12} className="mt-0.5 shrink-0 text-emerald-300" />
+                    {editing ? (
+                      <div className="flex flex-1 items-center gap-1">
+                        <EditableText value={f} onChange={(v) => updateService(i, { features: s.features.map((x, xi) => xi === fi ? v : x) })} editing={editing} className="flex-1 text-xs" />
+                        <button onClick={() => updateService(i, { features: s.features.filter((_, xi) => xi !== fi) })} className="text-red-300"><X size={11} /></button>
+                      </div>
+                    ) : (
+                      <span>{f}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              {editing && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button onClick={() => updateService(i, { features: [...s.features, "New feature"] })} className="rounded-full border border-emerald-400/40 px-2 py-0.5 text-[10px] text-emerald-300">+ feature</button>
+                  <button onClick={() => removeService(i)} className="rounded-full border border-red-400/40 px-2 py-0.5 text-[10px] text-red-300">remove card</button>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+      {editing && <AddRemoveBar onAdd={addService} addLabel="Add service" />}
+    </section>
+  );
+}
+
+// ---------- 03 Why Choose (animated counters) ----------
+
+function useCounter(target: number, active: boolean, duration = 1200) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    let raf = 0;
+    const start = performance.now();
+    const step = (t: number) => {
+      const p = Math.min(1, (t - start) / duration);
+      setN(Math.floor(p * target));
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [target, active, duration]);
+  return n;
+}
+
+function StatCard({ stat, editing, onChange, onRemove }: { stat: Stat; editing: boolean; onChange: (p: Partial<Stat>) => void; onRemove: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (!ref.current) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.4 });
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
+  const numeric = parseInt(stat.value.replace(/[^0-9]/g, ""), 10) || 0;
+  const nonNumeric = /^[a-zA-Z]/.test(stat.value);
+  const n = useCounter(numeric, visible);
+  return (
+    <div ref={ref} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-6 text-center backdrop-blur-sm transition hover:border-emerald-400/40">
+      <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10 text-emerald-300">
+        <DynIcon name={stat.icon} size={22} />
+      </div>
+      {editing && <div className="mb-2"><IconPicker value={stat.icon} onChange={(v) => onChange({ icon: v })} /></div>}
+      <div className="text-4xl font-bold tracking-tight text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+        {editing ? (
+          <EditableText value={stat.value} onChange={(v) => onChange({ value: v })} editing={editing} className="w-24 text-center text-2xl" />
+        ) : (
+          <>
+            {nonNumeric ? stat.value : n}
+            {stat.suffix && <span className="text-emerald-300">{stat.suffix}</span>}
+          </>
+        )}
+      </div>
+      {editing && (
+        <EditableText value={stat.suffix || ""} onChange={(v) => onChange({ suffix: v })} editing={editing} placeholder="suffix" className="mt-1 w-16 text-center text-xs" />
+      )}
+      <div className="mt-2 text-sm text-white/60">
+        <EditableText value={stat.label} onChange={(v) => onChange({ label: v })} editing={editing} />
+      </div>
+      {editing && (
+        <button onClick={onRemove} className="mt-3 text-[10px] text-red-300">remove</button>
+      )}
+    </div>
+  );
+}
+
+function WhyChoose({ data, setData, editing }: { data: Data; setData: (u: (d: Data) => Data) => void; editing: boolean }) {
+  const update = (i: number, p: Partial<Stat>) =>
+    setData((d) => ({ ...d, stats: d.stats.map((s, idx) => idx === i ? { ...s, ...p } : s) }));
+  return (
+    <section id="why" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
+      <SectionHeader
+        eyebrow="§ 03 · Why us"
+        title={data.whyTitle}
+        description={data.whyDescription}
+        onTitle={(v) => setData((d) => ({ ...d, whyTitle: v }))}
+        onDescription={(v) => setData((d) => ({ ...d, whyDescription: v }))}
+        editing={editing}
+      />
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+        {data.stats.map((s, i) => (
+          <StatCard key={i} stat={s} editing={editing} onChange={(p) => update(i, p)} onRemove={() => setData((d) => ({ ...d, stats: d.stats.filter((_, idx) => idx !== i) }))} />
+        ))}
+      </div>
+      {editing && (
+        <AddRemoveBar
+          onAdd={() => setData((d) => ({ ...d, stats: [...d.stats, { icon: "Star", value: "10", suffix: "+", label: "New stat" }] }))}
+          addLabel="Add stat"
+        />
+      )}
+    </section>
+  );
+}
+
+// ---------- 05 Technologies ----------
+
+function Technologies({ data, setData, editing }: { data: Data; setData: (u: (d: Data) => Data) => void; editing: boolean }) {
+  return (
+    <section id="technologies" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
+      <SectionHeader
+        eyebrow="§ 05 · Stack"
+        title={data.techTitle}
+        description={data.techDescription}
+        onTitle={(v) => setData((d) => ({ ...d, techTitle: v }))}
+        onDescription={(v) => setData((d) => ({ ...d, techDescription: v }))}
+        editing={editing}
+      />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        {data.technologies.map((t, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.35, delay: i * 0.03 }}
+            whileHover={{ y: -4, scale: 1.03 }}
+            className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm transition hover:border-emerald-400/40 hover:bg-emerald-400/[0.04]"
+          >
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-400/30 bg-emerald-400/10 text-emerald-300 transition group-hover:scale-110">
+              <DynIcon name={t.icon} size={18} />
+            </div>
+            <div className="min-w-0 flex-1">
+              {editing ? (
+                <>
+                  <EditableText value={t.name} onChange={(v) => setData((d) => ({ ...d, technologies: d.technologies.map((x, xi) => xi === i ? { ...x, name: v } : x) }))} editing={editing} className="w-full text-sm" />
+                  <IconPicker value={t.icon} onChange={(v) => setData((d) => ({ ...d, technologies: d.technologies.map((x, xi) => xi === i ? { ...x, icon: v } : x) }))} />
+                  <button onClick={() => setData((d) => ({ ...d, technologies: d.technologies.filter((_, xi) => xi !== i) }))} className="mt-1 text-[10px] text-red-300">remove</button>
+                </>
+              ) : (
+                <span className="block truncate text-sm font-medium text-white">{t.name}</span>
+              )}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+      {editing && (
+        <AddRemoveBar onAdd={() => setData((d) => ({ ...d, technologies: [...d.technologies, { name: "New tech", icon: "Code2" }] }))} addLabel="Add technology" />
+      )}
+    </section>
+  );
+}
+
+// ---------- 06 Process ----------
+
+function Process({ data, setData, editing }: { data: Data; setData: (u: (d: Data) => Data) => void; editing: boolean }) {
+  return (
+    <section id="process" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
+      <SectionHeader
+        eyebrow="§ 06 · Process"
+        title={data.processTitle}
+        description={data.processDescription}
+        onTitle={(v) => setData((d) => ({ ...d, processTitle: v }))}
+        onDescription={(v) => setData((d) => ({ ...d, processDescription: v }))}
+        editing={editing}
+      />
+      <div className="relative">
+        <div aria-hidden className="absolute left-6 top-0 hidden h-full w-px bg-gradient-to-b from-emerald-400/40 via-white/10 to-transparent md:block" />
+        <div className="grid gap-4 md:grid-cols-1">
+          {data.process.map((p, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.45, delay: i * 0.06 }}
+              className="group relative flex gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm transition hover:border-emerald-400/40"
+            >
+              <div className="relative shrink-0">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10 text-emerald-300">
+                  <DynIcon name={p.icon} size={20} />
+                </div>
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400 text-[10px] font-bold text-black">{i + 1}</span>
+              </div>
+              <div className="flex-1">
+                {editing && <div className="mb-1"><IconPicker value={p.icon} onChange={(v) => setData((d) => ({ ...d, process: d.process.map((x, xi) => xi === i ? { ...x, icon: v } : x) }))} /></div>}
+                <h3 className="font-semibold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                  <EditableText value={p.title} onChange={(v) => setData((d) => ({ ...d, process: d.process.map((x, xi) => xi === i ? { ...x, title: v } : x) }))} editing={editing} />
+                </h3>
+                <div className="mt-1 text-sm text-white/65">
+                  <EditableText value={p.description} onChange={(v) => setData((d) => ({ ...d, process: d.process.map((x, xi) => xi === i ? { ...x, description: v } : x) }))} editing={editing} multiline as="p" />
+                </div>
+                {editing && (
+                  <button onClick={() => setData((d) => ({ ...d, process: d.process.filter((_, xi) => xi !== i) }))} className="mt-2 text-[10px] text-red-300">remove step</button>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+      {editing && (
+        <AddRemoveBar onAdd={() => setData((d) => ({ ...d, process: [...d.process, { icon: "Sparkles", title: "New step", description: "Describe this step." }] }))} addLabel="Add step" />
+      )}
+    </section>
+  );
+}
+
+// ---------- 08 Pricing ----------
+
+function Pricing({ data, setData, editing }: { data: Data; setData: (u: (d: Data) => Data) => void; editing: boolean }) {
+  const update = (i: number, p: Partial<PricingTier>) =>
+    setData((d) => ({ ...d, pricing: d.pricing.map((t, xi) => xi === i ? { ...t, ...p } : t) }));
+  return (
+    <section id="pricing" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
+      <SectionHeader
+        eyebrow="§ 08 · Pricing"
+        title={data.pricingTitle}
+        description={data.pricingDescription}
+        onTitle={(v) => setData((d) => ({ ...d, pricingTitle: v }))}
+        onDescription={(v) => setData((d) => ({ ...d, pricingDescription: v }))}
+        editing={editing}
+      />
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {data.pricing.map((t, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: i * 0.05 }}
+            whileHover={{ y: -6 }}
+            className={
+              "relative flex flex-col overflow-hidden rounded-3xl border p-7 backdrop-blur-sm transition " +
+              (t.featured
+                ? "border-emerald-400/60 bg-gradient-to-b from-emerald-400/[0.08] to-transparent shadow-[0_20px_60px_-20px_rgba(16,185,129,0.4)]"
+                : "border-white/10 bg-white/[0.03] hover:border-white/25")
+            }
+          >
+            {t.featured && (
+              <div className="absolute right-5 top-5 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-black">
+                <Star size={10} /> Most popular
+              </div>
+            )}
+            <h3 className="text-lg font-semibold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+              <EditableText value={t.name} onChange={(v) => update(i, { name: v })} editing={editing} />
+            </h3>
+            <div className="mt-2 text-sm text-white/60">
+              <EditableText value={t.description} onChange={(v) => update(i, { description: v })} editing={editing} multiline as="p" />
+            </div>
+            <div className="mt-5 flex items-baseline gap-2">
+              <span className="text-4xl font-bold tracking-tight text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                <EditableText value={t.price} onChange={(v) => update(i, { price: v })} editing={editing} className="w-28" />
+              </span>
+              <span className="text-xs uppercase tracking-wider text-white/50">
+                <EditableText value={t.period} onChange={(v) => update(i, { period: v })} editing={editing} />
+              </span>
+            </div>
+            <ul className="mt-6 flex-1 space-y-2 text-sm text-white/75">
+              {t.features.map((f, fi) => (
+                <li key={fi} className="flex items-start gap-2">
+                  <Check size={14} className="mt-0.5 shrink-0 text-emerald-300" />
+                  {editing ? (
+                    <div className="flex flex-1 items-center gap-1">
+                      <EditableText value={f} onChange={(v) => update(i, { features: t.features.map((x, xi) => xi === fi ? v : x) })} editing={editing} className="flex-1 text-sm" />
+                      <button onClick={() => update(i, { features: t.features.filter((_, xi) => xi !== fi) })} className="text-red-300"><X size={11} /></button>
+                    </div>
+                  ) : (
+                    <span>{f}</span>
+                  )}
+                </li>
+              ))}
+              {editing && (
+                <li>
+                  <button onClick={() => update(i, { features: [...t.features, "New feature"] })} className="text-[11px] text-emerald-300">+ add feature</button>
+                </li>
+              )}
+            </ul>
+            {editing && (
+              <label className="mt-4 flex items-center gap-2 text-[11px] text-white/60">
+                <input type="checkbox" checked={!!t.featured} onChange={(e) => update(i, { featured: e.target.checked })} /> featured
+              </label>
+            )}
+            <a
+              href="#contact"
+              className={
+                "mt-6 inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition " +
+                (t.featured
+                  ? "bg-gradient-to-r from-emerald-400 to-cyan-400 text-black hover:brightness-110"
+                  : "border border-white/20 bg-white/[0.03] text-white hover:border-white/40 hover:bg-white/[0.06]")
+              }
+            >
+              <EditableText value={t.cta} onChange={(v) => update(i, { cta: v })} editing={editing} />
+              <ArrowRight size={14} />
+            </a>
+            {editing && (
+              <button onClick={() => setData((d) => ({ ...d, pricing: d.pricing.filter((_, xi) => xi !== i) }))} className="mt-2 text-[10px] text-red-300">remove tier</button>
+            )}
+          </motion.div>
+        ))}
+      </div>
+      {editing && (
+        <AddRemoveBar onAdd={() => setData((d) => ({ ...d, pricing: [...d.pricing, { name: "New tier", price: "$0", period: "one-time", description: "Describe.", features: ["Feature 1"], cta: "Get started" }] }))} addLabel="Add pricing tier" />
+      )}
+    </section>
+  );
+}
+
+// ---------- 09 Testimonials ----------
+
+function Testimonials({ data, setData, editing }: { data: Data; setData: (u: (d: Data) => Data) => void; editing: boolean }) {
+  const update = (i: number, p: Partial<Testimonial>) =>
+    setData((d) => ({ ...d, testimonials: d.testimonials.map((t, xi) => xi === i ? { ...t, ...p } : t) }));
+  return (
+    <section id="testimonials" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
+      <SectionHeader
+        eyebrow="§ 09 · Testimonials"
+        title={data.testimonialsTitle}
+        description={data.testimonialsDescription}
+        onTitle={(v) => setData((d) => ({ ...d, testimonialsTitle: v }))}
+        onDescription={(v) => setData((d) => ({ ...d, testimonialsDescription: v }))}
+        editing={editing}
+      />
+      {data.testimonials.length === 0 ? (
+        <div className="mx-auto max-w-xl rounded-3xl border border-dashed border-white/15 bg-white/[0.02] p-12 text-center">
+          <Quote size={28} className="mx-auto mb-3 text-emerald-300/70" />
+          <p className="text-sm text-white/60">
+            Testimonials from clients we've worked with will appear here.
+            {editing && " Add the first one below."}
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {data.testimonials.map((t, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.06 }}
+              className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm"
+            >
+              <Quote size={22} className="mb-3 text-emerald-300/70" />
+              <div className="mb-4 text-sm leading-relaxed text-white/80">
+                <EditableText value={t.quote} onChange={(v) => update(i, { quote: v })} editing={editing} multiline as="p" />
+              </div>
+              <div className="flex items-center gap-1 mb-3">
+                {[...Array(5)].map((_, si) => (
+                  <Star key={si} size={12} className={si < t.rating ? "fill-emerald-300 text-emerald-300" : "text-white/20"} />
+                ))}
+              </div>
+              {editing && (
+                <input type="number" min={1} max={5} value={t.rating} onChange={(e) => update(i, { rating: parseInt(e.target.value) || 5 })} className="mb-2 w-16 rounded border border-white/20 bg-black px-2 py-1 text-xs text-white" />
+              )}
+              <div className="text-sm font-semibold text-white">
+                <EditableText value={t.name} onChange={(v) => update(i, { name: v })} editing={editing} />
+              </div>
+              <div className="text-xs text-white/50">
+                <EditableText value={t.role} onChange={(v) => update(i, { role: v })} editing={editing} />
+              </div>
+              {editing && (
+                <button onClick={() => setData((d) => ({ ...d, testimonials: d.testimonials.filter((_, xi) => xi !== i) }))} className="mt-2 text-[10px] text-red-300">remove</button>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      )}
+      {editing && (
+        <AddRemoveBar onAdd={() => setData((d) => ({ ...d, testimonials: [...d.testimonials, { name: "Client Name", role: "Role · Company", quote: "PC Nexus delivered beyond expectations.", rating: 5 }] }))} addLabel="Add testimonial" />
+      )}
+    </section>
+  );
+}
+
+// ---------- 11 FAQ ----------
+
+function FAQSection({ data, setData, editing }: { data: Data; setData: (u: (d: Data) => Data) => void; editing: boolean }) {
+  const [open, setOpen] = useState<number | null>(0);
+  const update = (i: number, p: Partial<FAQ>) =>
+    setData((d) => ({ ...d, faqs: d.faqs.map((f, xi) => xi === i ? { ...f, ...p } : f) }));
+  return (
+    <section id="faq" className="relative z-10 mx-auto max-w-4xl px-6 py-24">
+      <SectionHeader
+        eyebrow="§ 11 · FAQ"
+        title={data.faqTitle}
+        description={data.faqDescription}
+        onTitle={(v) => setData((d) => ({ ...d, faqTitle: v }))}
+        onDescription={(v) => setData((d) => ({ ...d, faqDescription: v }))}
+        editing={editing}
+      />
+      <div className="space-y-3">
+        {data.faqs.map((f, i) => {
+          const isOpen = open === i;
+          return (
+            <div key={i} className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm transition hover:border-white/20">
+              <button
+                onClick={() => setOpen(isOpen ? null : i)}
+                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+              >
+                <span className="flex flex-1 items-start gap-3 text-sm font-medium text-white md:text-base">
+                  <HelpCircle size={16} className="mt-0.5 shrink-0 text-emerald-300" />
+                  {editing ? (
+                    <EditableText value={f.q} onChange={(v) => update(i, { q: v })} editing={editing} className="flex-1" />
+                  ) : (
+                    <span>{f.q}</span>
+                  )}
+                </span>
+                <ChevronDown size={16} className={"shrink-0 text-white/50 transition-transform " + (isOpen ? "rotate-180" : "")} />
+              </button>
+              <motion.div
+                initial={false}
+                animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden"
+              >
+                <div className="px-5 pb-5 pl-14 text-sm leading-relaxed text-white/70">
+                  <EditableText value={f.a} onChange={(v) => update(i, { a: v })} editing={editing} multiline as="p" />
+                  {editing && (
+                    <button onClick={() => setData((d) => ({ ...d, faqs: d.faqs.filter((_, xi) => xi !== i) }))} className="mt-2 text-[10px] text-red-300">remove</button>
+                  )}
+                </div>
+              </motion.div>
+            </div>
+          );
+        })}
+      </div>
+      {editing && (
+        <AddRemoveBar onAdd={() => setData((d) => ({ ...d, faqs: [...d.faqs, { q: "New question?", a: "Answer here." }] }))} addLabel="Add FAQ" />
+      )}
+    </section>
+  );
+}
+
+// ---------- 13 Footer ----------
+
+function Footer({ data, setData, editing }: { data: Data; setData: (u: (d: Data) => Data) => void; editing: boolean }) {
+  const year = new Date().getFullYear();
+  return (
+    <footer className="relative z-10 border-t border-white/10 bg-white/[0.02] backdrop-blur-sm">
+      <div className="mx-auto max-w-6xl px-6 py-16">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
+          <div className="lg:col-span-2">
+            <div className="flex items-center gap-3">
+              <div className="relative h-11 w-11 overflow-hidden rounded-2xl border border-white/15 bg-white/[0.04]">
+                <img src={logoAsset.url} alt={data.brandName} className="h-full w-full object-contain p-1" />
+              </div>
+              <div>
+                <div className="text-base font-semibold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>{data.brandName}</div>
+                <div className="text-[10px] uppercase tracking-[0.18em] text-white/45">{data.brandTagline}</div>
+              </div>
+            </div>
+            <div className="mt-4 max-w-sm text-sm text-white/60">
+              <EditableText value={data.footerTagline} onChange={(v) => setData((d) => ({ ...d, footerTagline: v }))} editing={editing} multiline as="p" />
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <a href={`mailto:${data.email}`} className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70 hover:border-emerald-400/50 hover:text-emerald-300"><Mail size={14} /></a>
+              <a href={data.linkedin} target="_blank" rel="noreferrer" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70 hover:border-emerald-400/50 hover:text-emerald-300"><Linkedin size={14} /></a>
+              <a href={data.github} target="_blank" rel="noreferrer" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70 hover:border-emerald-400/50 hover:text-emerald-300"><Github size={14} /></a>
+              <a href={`https://wa.me/${data.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noreferrer" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70 hover:border-emerald-400/50 hover:text-emerald-300"><MessageCircle size={14} /></a>
+            </div>
+          </div>
+          {data.footerCols.map((col, ci) => (
+            <div key={ci}>
+              <h4 className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
+                <EditableText value={col.title} onChange={(v) => setData((d) => ({ ...d, footerCols: d.footerCols.map((c, xi) => xi === ci ? { ...c, title: v } : c) }))} editing={editing} />
+              </h4>
+              <ul className="space-y-2 text-sm">
+                {col.links.map((l, li) => (
+                  <li key={li} className="flex items-center gap-2">
+                    <a href={l.href} className="text-white/60 hover:text-white">
+                      {editing ? (
+                        <EditableText value={l.label} onChange={(v) => setData((d) => ({ ...d, footerCols: d.footerCols.map((c, xi) => xi === ci ? { ...c, links: c.links.map((x, yi) => yi === li ? { ...x, label: v } : x) } : c) }))} editing={editing} className="text-sm" />
+                      ) : l.label}
+                    </a>
+                    {editing && (
+                      <input value={l.href} onChange={(e) => setData((d) => ({ ...d, footerCols: d.footerCols.map((c, xi) => xi === ci ? { ...c, links: c.links.map((x, yi) => yi === li ? { ...x, href: e.target.value } : x) } : c) }))} className="w-24 rounded border border-white/15 bg-black/40 px-1 py-0.5 text-[10px] text-white" />
+                    )}
+                    {editing && (
+                      <button onClick={() => setData((d) => ({ ...d, footerCols: d.footerCols.map((c, xi) => xi === ci ? { ...c, links: c.links.filter((_, yi) => yi !== li) } : c) }))} className="text-[10px] text-red-300"><X size={10} /></button>
+                    )}
+                  </li>
+                ))}
+                {editing && (
+                  <li>
+                    <button onClick={() => setData((d) => ({ ...d, footerCols: d.footerCols.map((c, xi) => xi === ci ? { ...c, links: [...c.links, { label: "New link", href: "#" }] } : c) }))} className="text-[11px] text-emerald-300">+ link</button>
+                  </li>
+                )}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row">
+          <div>© {year} {data.brandName}. All rights reserved.</div>
+          <div className="flex flex-wrap items-center gap-5">
+            <a href="#" className="hover:text-white">Privacy Policy</a>
+            <a href="#" className="hover:text-white">Terms</a>
+            <a href="#top" className="inline-flex items-center gap-1 hover:text-white">Back to top <ArrowUp size={11} /></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ---------- Back to top ----------
+
+function BackToTop() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 500);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  if (!show) return null;
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      aria-label="Back to top"
+      className="fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 text-black shadow-[0_10px_30px_-8px_rgba(16,185,129,0.6)] transition hover:brightness-110"
+    >
+      <ArrowUp size={18} />
+    </motion.button>
+  );
+}
