@@ -776,6 +776,7 @@ function Index() {
     >
       <Grid />
       <Nav
+        data={data}
         editing={editing}
         onEditClick={requestEdit}
         theme={theme}
@@ -783,13 +784,22 @@ function Index() {
       />
 
       <Hero data={data} setData={setData} editing={editing} />
+      <Services data={data} setData={setData} editing={editing} />
+      <WhyChoose data={data} setData={setData} editing={editing} />
+      <Technologies data={data} setData={setData} editing={editing} />
+      <Process data={data} setData={setData} editing={editing} />
+      <Projects data={data} setData={setData} editing={editing} />
+      <Pricing data={data} setData={setData} editing={editing} />
+      <Testimonials data={data} setData={setData} editing={editing} />
       <About data={data} setData={setData} editing={editing} />
       <Skills data={data} setData={setData} editing={editing} />
       <ExperienceSection data={data} setData={setData} editing={editing} />
-      <Projects data={data} setData={setData} editing={editing} />
       <Certificates data={data} setData={setData} editing={editing} />
       <Blog data={data} setData={setData} editing={editing} />
+      <FAQSection data={data} setData={setData} editing={editing} />
       <Contact data={data} setData={setData} editing={editing} />
+      <Footer data={data} setData={setData} editing={editing} />
+      <BackToTop />
       {passOpen && (
         <PasscodeModal
           onClose={() => setPassOpen(false)}
