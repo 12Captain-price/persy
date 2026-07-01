@@ -888,57 +888,120 @@ function Grid() {
 }
 
 function Nav({
+  data,
   editing,
   onEditClick,
   theme,
   onToggleTheme,
 }: {
+  data: Data;
   editing: boolean;
   onEditClick: () => void;
   theme: "dark" | "light";
   onToggleTheme: () => void;
 }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  const links = [
+    { href: "#services", label: "Services" },
+    { href: "#technologies", label: "Tech" },
+    { href: "#projects", label: "Projects" },
+    { href: "#pricing", label: "Pricing" },
+    { href: "#about", label: "Founder" },
+    { href: "#faq", label: "FAQ" },
+    { href: "#contact", label: "Contact" },
+  ];
   return (
-    <header className="relative z-20 mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-      <a
-        href="#top"
-        className="font-mono text-sm tracking-tight text-white"
-        style={{ fontFamily: "JetBrains Mono, monospace" }}
-      >
-        ./portfolio
-      </a>
-      <nav className="hidden gap-6 text-sm text-white/60 lg:flex">
-        <a href="#about" className="hover:text-white">about</a>
-        <a href="#skills" className="hover:text-white">skills</a>
-        <a href="#experience" className="hover:text-white">experience</a>
-        <a href="#projects" className="hover:text-white">projects</a>
-        <a href="#certificates" className="hover:text-white">certificates</a>
-        <a href="#blog" className="hover:text-white">blog</a>
-        <a href="#contact" className="hover:text-white">contact</a>
-      </nav>
-      <div className="flex items-center gap-2">
-        <button
-          onClick={onToggleTheme}
-          aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-          title={theme === "dark" ? "Light mode" : "Dark mode"}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/70 transition hover:border-white/50 hover:text-white"
-        >
-          {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
-        </button>
-        <button
-          onClick={onEditClick}
-          aria-label={editing ? "Stop editing" : "Edit site"}
-          title={editing ? "Done editing" : "Edit (passcode required)"}
-          className={
-            "flex h-9 w-9 items-center justify-center rounded-full transition " +
-            (editing
-              ? "bg-emerald-400 text-black hover:bg-emerald-300"
-              : "border border-white/20 text-white/70 hover:border-white/50 hover:text-white")
-          }
-        >
-          <Pencil size={15} />
-        </button>
+    <header
+      className={
+        "sticky top-0 z-40 w-full transition-all " +
+        (scrolled
+          ? "border-b border-white/10 bg-[#0a0a0a]/80 backdrop-blur-xl"
+          : "border-b border-transparent bg-transparent")
+      }
+    >
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
+        <a href="#top" className="flex items-center gap-2.5">
+          <div className="relative h-9 w-9 overflow-hidden rounded-xl border border-white/15 bg-white/[0.04]">
+            <img src={logoAsset.url} alt={data.brandName} className="h-full w-full object-contain p-1" />
+          </div>
+          <div className="flex flex-col leading-tight">
+            <span
+              className="text-sm font-semibold tracking-tight text-white"
+              style={{ fontFamily: "Space Grotesk, sans-serif" }}
+            >
+              {data.brandName}
+            </span>
+            <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">
+              {data.brandTagline}
+            </span>
+          </div>
+        </a>
+        <nav className="hidden gap-7 text-sm text-white/65 lg:flex">
+          {links.map((l) => (
+            <a key={l.href} href={l.href} className="transition hover:text-white">
+              {l.label}
+            </a>
+          ))}
+        </nav>
+        <div className="flex items-center gap-2">
+          <a
+            href="#contact"
+            className="hidden rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 px-4 py-2 text-xs font-semibold text-black shadow-[0_0_20px_-4px_rgba(16,185,129,0.6)] transition hover:brightness-110 md:inline-flex"
+          >
+            Hire Us
+          </a>
+          <button
+            onClick={onToggleTheme}
+            aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/70 transition hover:border-white/50 hover:text-white"
+          >
+            {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+          </button>
+          <button
+            onClick={onEditClick}
+            aria-label={editing ? "Stop editing" : "Edit site"}
+            title={editing ? "Done editing" : "Edit (passcode required)"}
+            className={
+              "flex h-9 w-9 items-center justify-center rounded-full transition " +
+              (editing
+                ? "bg-emerald-400 text-black hover:bg-emerald-300"
+                : "border border-white/20 text-white/70 hover:border-white/50 hover:text-white")
+            }
+          >
+            <Pencil size={15} />
+          </button>
+          <button
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label="Menu"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/70 lg:hidden"
+          >
+            {mobileOpen ? <X size={16} /> : <Menu size={16} />}
+          </button>
+        </div>
       </div>
+      {mobileOpen && (
+        <div className="border-t border-white/10 bg-[#0a0a0a]/95 backdrop-blur-xl lg:hidden">
+          <div className="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-4">
+            {links.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={() => setMobileOpen(false)}
+                className="rounded-lg px-3 py-2 text-sm text-white/75 transition hover:bg-white/5 hover:text-white"
+              >
+                {l.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   );
 }
