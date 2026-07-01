@@ -1254,33 +1254,90 @@ function About({
   setData: (u: (d: Data) => Data) => void;
   editing: boolean;
 }) {
+  const avatarRef = useRef<HTMLInputElement>(null);
+  const cvRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [cvBusy, setCvBusy] = useState(false);
+
+  const onPickAvatar = async (file: File) => {
+    setBusy(true);
+    const ref = await uploadFile(file, "avatars");
+    setBusy(false);
+    if (ref) setData((d) => ({ ...d, avatar: ref.url }));
+  };
+  const onPickCv = async (file: File) => {
+    setCvBusy(true);
+    const ref = await uploadFile(file, "cv");
+    setCvBusy(false);
+    if (ref) setData((d) => ({ ...d, cv: { name: ref.name, url: ref.url } }));
+  };
+
   return (
     <section id="about" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
-      <SectionLabel n="§ 01" label="about" />
-      <div className="grid gap-12 md:grid-cols-5">
-        <h2
-          className="text-3xl font-bold leading-tight tracking-tight md:col-span-2 md:text-4xl"
-          style={{ fontFamily: "Space Grotesk, sans-serif" }}
-        >
-          Student today.
-          <br />
-          Practitioner tomorrow.
-        </h2>
-        <div className="space-y-5 text-white/70 md:col-span-3 md:text-lg">
-          <EditableText
-            value={data.about1}
-            onChange={(v) => setData((d) => ({ ...d, about1: v }))}
-            editing={editing}
-            multiline
-            as="p"
-          />
-          <EditableText
-            value={data.about2}
-            onChange={(v) => setData((d) => ({ ...d, about2: v }))}
-            editing={editing}
-            multiline
-            as="p"
-          />
+      <SectionLabel n="§ 01" label="meet the founder" />
+      <div className="grid gap-10 md:grid-cols-[auto,1fr] md:gap-14">
+        <div className="flex flex-col items-start gap-4">
+          <div className="relative h-40 w-40 overflow-hidden rounded-3xl border border-white/15 bg-white/[0.04] shadow-[0_20px_60px_-20px_rgba(16,185,129,0.35)] md:h-48 md:w-48">
+            {data.avatar ? (
+              <img src={data.avatar} alt={data.name} className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-4xl font-bold text-white/40">
+                {data.name.split(" ").map((s) => s[0]).slice(0, 2).join("")}
+              </div>
+            )}
+          </div>
+          <div className="text-left">
+            <EditableText
+              value={data.name}
+              onChange={(v) => setData((d) => ({ ...d, name: v }))}
+              editing={editing}
+              className="block text-lg font-semibold text-white"
+              style={{ fontFamily: "Space Grotesk, sans-serif" }}
+            />
+            <p className="text-xs uppercase tracking-[0.18em] text-white/45">Founder · PC Nexus</p>
+          </div>
+          {editing && (
+            <div className="flex flex-wrap gap-2">
+              <button onClick={() => avatarRef.current?.click()} disabled={busy} className="flex items-center gap-1 rounded-full border border-emerald-400/40 px-3 py-1 text-xs text-emerald-300 hover:bg-emerald-400/10 disabled:opacity-50">
+                <Upload size={12} /> {busy ? "Uploading…" : data.avatar ? "Change photo" : "Upload photo"}
+              </button>
+              {data.avatar && (
+                <button onClick={() => setData((d) => ({ ...d, avatar: "" }))} className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/60 hover:bg-white/5">Remove</button>
+              )}
+              <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onPickAvatar(f); e.target.value = ""; }} />
+            </div>
+          )}
+          <div className="flex flex-wrap items-center gap-2">
+            {data.cv && <SecureViewer file={data.cv} label="View CV" />}
+            {editing && (
+              <>
+                <button onClick={() => cvRef.current?.click()} disabled={cvBusy} className="rounded-full border border-emerald-400/40 px-3 py-1 text-xs text-emerald-300 hover:bg-emerald-400/10 disabled:opacity-50">
+                  {cvBusy ? "Uploading…" : data.cv ? "Change CV" : "Upload CV"}
+                </button>
+                {data.cv && (
+                  <LockToggle locked={data.cv.locked !== false} onChange={(next) => setData((d) => (d.cv ? { ...d, cv: { ...d.cv, locked: next } } : d))} />
+                )}
+                {data.cv && (
+                  <button onClick={() => setData((d) => ({ ...d, cv: null }))} className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/60 hover:bg-white/5">Remove</button>
+                )}
+                <input ref={cvRef} type="file" accept="application/pdf,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onPickCv(f); e.target.value = ""; }} />
+              </>
+            )}
+          </div>
+        </div>
+        <div className="space-y-6">
+          <h2 className="text-3xl font-bold leading-tight tracking-tight md:text-4xl" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+            The mind behind <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">PC Nexus</span>.
+          </h2>
+          <div className="space-y-4 text-white/75 md:text-lg">
+            <EditableText value={data.about1} onChange={(v) => setData((d) => ({ ...d, about1: v }))} editing={editing} multiline as="p" />
+            <EditableText value={data.about2} onChange={(v) => setData((d) => ({ ...d, about2: v }))} editing={editing} multiline as="p" />
+          </div>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <a href={`mailto:${data.email}`} className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs text-white/85 hover:border-white/30 hover:bg-white/[0.06]"><Mail size={13} /> Email</a>
+            <a href={data.linkedin} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs text-white/85 hover:border-white/30 hover:bg-white/[0.06]"><Linkedin size={13} /> LinkedIn</a>
+            <a href={data.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs text-white/85 hover:border-white/30 hover:bg-white/[0.06]"><Github size={13} /> GitHub</a>
+          </div>
         </div>
       </div>
     </section>
