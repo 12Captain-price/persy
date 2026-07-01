@@ -1072,202 +1072,161 @@ function Hero({
   setData: (u: (d: Data) => Data) => void;
   editing: boolean;
 }) {
-  const fileRef = useRef<HTMLInputElement>(null);
-  const cvRef = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false);
-  const [cvBusy, setCvBusy] = useState(false);
-
-  const onPickAvatar = async (file: File) => {
-    setBusy(true);
-    const ref = await uploadFile(file, "avatars");
-    setBusy(false);
-    if (ref) setData((d) => ({ ...d, avatar: ref.url }));
-  };
-
-  const onPickCv = async (file: File) => {
-    setCvBusy(true);
-    const ref = await uploadFile(file, "cv");
-    setCvBusy(false);
-    if (ref) setData((d) => ({ ...d, cv: { name: ref.name, url: ref.url } }));
-  };
-
   return (
-    <section id="top" className="relative z-10 mx-auto max-w-6xl px-6 pb-24 pt-12 md:pt-20">
-      <div className="grid items-center gap-12 md:grid-cols-[auto,1fr]">
-        <div className="flex flex-col items-start gap-3">
-          <div className="relative h-32 w-32 overflow-hidden rounded-full border border-white/15 bg-white/[0.04] md:h-40 md:w-40">
-            {data.avatar ? (
-              <img
-                src={data.avatar}
-                alt={data.name}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-white/40">
-                {data.name
-                  .split(" ")
-                  .map((s) => s[0])
-                  .slice(0, 2)
-                  .join("")}
-              </div>
-            )}
+    <section id="top" className="relative z-10 overflow-hidden">
+      {/* Animated background */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-[-10%] h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-emerald-500/15 blur-[120px]" />
+        <div className="absolute right-[-10%] top-[20%] h-[420px] w-[420px] rounded-full bg-cyan-500/15 blur-[120px]" />
+        <div className="absolute left-[-10%] bottom-[-10%] h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-[120px]" />
+      </div>
+      {/* Floating tech icons */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 hidden md:block">
+        {[
+          { Icon: Code2, top: "18%", left: "8%", d: 0 },
+          { Icon: Database, top: "70%", left: "12%", d: 0.6 },
+          { Icon: Brain, top: "26%", right: "10%", d: 0.3 },
+          { Icon: BarChart3, top: "72%", right: "8%", d: 0.9 },
+          { Icon: Cpu, top: "48%", left: "5%", d: 1.2 },
+          { Icon: Sparkles, top: "40%", right: "6%", d: 1.5 },
+        ].map(({ Icon, top, left, right, d }, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 0.35, y: [0, -14, 0] }}
+            transition={{ duration: 6, delay: d, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute text-emerald-300/50"
+            style={{ top, left, right }}
+          >
+            <Icon size={28} />
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center px-6 pb-28 pt-16 md:pt-24 text-center">
+        {/* Logo mark */}
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.7 }}
+          className="mb-8 flex items-center gap-3 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 backdrop-blur-sm"
+        >
+          <div className="relative h-7 w-7 overflow-hidden rounded-md">
+            <img src={logoAsset.url} alt={data.brandName} className="h-full w-full object-contain" />
           </div>
-          {editing && (
-            <div className="flex gap-2">
-              <button
-                onClick={() => fileRef.current?.click()}
-                disabled={busy}
-                className="flex items-center gap-1 rounded-full border border-emerald-400/40 px-3 py-1 text-xs text-emerald-300 hover:bg-emerald-400/10 disabled:opacity-50"
-              >
-                <Upload size={12} />
-                {busy ? "Uploading…" : data.avatar ? "Change photo" : "Upload photo"}
-              </button>
-              {data.avatar && (
-                <button
-                  onClick={() => setData((d) => ({ ...d, avatar: "" }))}
-                  className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/60 hover:bg-white/5"
-                >
-                  Remove
-                </button>
-              )}
-              <input
-                ref={fileRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) onPickAvatar(f);
-                  e.target.value = "";
-                }}
-              />
-            </div>
-          )}
-        </div>
-
-        <div>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-4 font-mono text-xs uppercase tracking-[0.25em] text-white/50"
-            style={{ fontFamily: "JetBrains Mono, monospace" }}
-          >
-            <EditableText
-              value={data.tagline}
-              onChange={(v) => setData((d) => ({ ...d, tagline: v }))}
-              editing={editing}
-            />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.05 }}
-            className="mb-4"
-          >
-            <EditableText
-              value={data.name}
-              onChange={(v) => setData((d) => ({ ...d, name: v }))}
-              editing={editing}
-              className="text-xl font-medium text-white/80"
-            />
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-[clamp(2.2rem,7vw,5rem)] font-bold leading-[0.95] tracking-tight"
+          <EditableText
+            value={data.brandName}
+            onChange={(v) => setData((d) => ({ ...d, brandName: v }))}
+            editing={editing}
+            className="text-sm font-semibold tracking-tight text-white"
             style={{ fontFamily: "Space Grotesk, sans-serif" }}
-          >
-            {editing ? (
-              <div className="space-y-2">
-                <EditableText
-                  value={data.headlineLead}
-                  onChange={(v) => setData((d) => ({ ...d, headlineLead: v }))}
-                  editing={editing}
-                  className="text-3xl"
-                />
-                <EditableText
-                  value={data.headlineAccent}
-                  onChange={(v) => setData((d) => ({ ...d, headlineAccent: v }))}
-                  editing={editing}
-                  className="text-3xl"
-                />
-                <EditableText
-                  value={data.headlineTail}
-                  onChange={(v) => setData((d) => ({ ...d, headlineTail: v }))}
-                  editing={editing}
-                  className="text-3xl"
-                />
-              </div>
-            ) : (
-              <>
-                {data.headlineLead}
-                <br />
-                into{" "}
-                <span className="bg-gradient-to-r from-emerald-300 via-cyan-300 to-violet-300 bg-clip-text text-transparent">
-                  {data.headlineAccent}
-                </span>{" "}
-                {data.headlineTail}
-              </>
-            )}
-          </motion.h1>
+          />
+          <span className="h-3 w-px bg-white/20" />
+          <EditableText
+            value={data.brandTagline}
+            onChange={(v) => setData((d) => ({ ...d, brandTagline: v }))}
+            editing={editing}
+            className="text-[11px] uppercase tracking-[0.18em] text-white/60"
+          />
+        </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.4 }}
-            className="mt-10 flex flex-wrap gap-3"
+        {/* Big logo (mobile-friendly) */}
+        <motion.img
+          initial={{ opacity: 0, scale: 0.85, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          src={logoAsset.url}
+          alt={data.brandName}
+          className="mb-8 h-28 w-28 object-contain drop-shadow-[0_0_40px_rgba(16,185,129,0.35)] md:h-36 md:w-36"
+        />
+
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="max-w-4xl text-[clamp(2.4rem,6.5vw,4.75rem)] font-bold leading-[1.02] tracking-tight text-white"
+          style={{ fontFamily: "Space Grotesk, sans-serif" }}
+        >
+          {editing ? (
+            <EditableText
+              value={data.heroHeadline}
+              onChange={(v) => setData((d) => ({ ...d, heroHeadline: v }))}
+              editing={editing}
+              multiline
+              className="text-3xl"
+            />
+          ) : (
+            <>
+              Building{" "}
+              <span className="bg-gradient-to-r from-emerald-300 via-cyan-300 to-violet-300 bg-clip-text text-transparent">
+                {data.heroHeadline.replace(/^Building\s+/i, "")}
+              </span>
+            </>
+          )}
+        </motion.h1>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.35 }}
+          className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg"
+        >
+          <EditableText
+            value={data.heroSubtitle}
+            onChange={(v) => setData((d) => ({ ...d, heroSubtitle: v }))}
+            editing={editing}
+            multiline
+            as="p"
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.5 }}
+          className="mt-10 flex flex-wrap items-center justify-center gap-3"
+        >
+          <a
+            href="#contact"
+            className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 px-6 py-3 text-sm font-semibold text-black shadow-[0_10px_40px_-10px_rgba(16,185,129,0.7)] transition hover:brightness-110"
           >
-            <a
-              href="#projects"
-              className="rounded-full bg-white px-5 py-2.5 text-sm font-medium text-black transition hover:bg-white/90"
-            >
-              See projects →
-            </a>
-            {data.cv && <SecureViewer file={data.cv} label="View CV" />}
-            {editing && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => cvRef.current?.click()}
-                  disabled={cvBusy}
-                  className="rounded-full border border-emerald-400/40 px-4 py-2 text-xs text-emerald-300 hover:bg-emerald-400/10 disabled:opacity-50"
-                >
-                  {cvBusy ? "Uploading…" : data.cv ? "Change CV" : "Upload CV"}
-                </button>
-                {data.cv && (
-                  <LockToggle
-                    locked={data.cv.locked !== false}
-                    onChange={(next) =>
-                      setData((d) => (d.cv ? { ...d, cv: { ...d.cv, locked: next } } : d))
-                    }
-                  />
-                )}
-                {data.cv && (
-                  <button
-                    onClick={() => setData((d) => ({ ...d, cv: null }))}
-                    className="rounded-full border border-white/15 px-3 py-2 text-xs text-white/60 hover:bg-white/5"
-                  >
-                    Remove
-                  </button>
-                )}
-                <input
-                  ref={cvRef}
-                  type="file"
-                  accept="application/pdf,image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) onPickCv(f);
-                    e.target.value = "";
-                  }}
-                />
-              </div>
-            )}
-          </motion.div>
-        </div>
+            <EditableText value={data.ctaPrimary} onChange={(v) => setData((d) => ({ ...d, ctaPrimary: v }))} editing={editing} />
+            <ArrowRight size={16} className="transition group-hover:translate-x-0.5" />
+          </a>
+          <a
+            href="#projects"
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.03] px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-white/[0.06]"
+          >
+            <EditableText value={data.ctaSecondary} onChange={(v) => setData((d) => ({ ...d, ctaSecondary: v }))} editing={editing} />
+          </a>
+          <a
+            href="#pricing"
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.02] px-6 py-3 text-sm font-medium text-white/85 transition hover:border-white/30 hover:text-white"
+          >
+            <DollarSign size={15} />
+            <EditableText value={data.ctaQuote} onChange={(v) => setData((d) => ({ ...d, ctaQuote: v }))} editing={editing} />
+          </a>
+          <a
+            href={`mailto:${data.email}?subject=Consultation%20request`}
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.02] px-6 py-3 text-sm font-medium text-white/85 transition hover:border-white/30 hover:text-white"
+          >
+            <MessageCircle size={15} />
+            <EditableText value={data.ctaBook} onChange={(v) => setData((d) => ({ ...d, ctaBook: v }))} editing={editing} />
+          </a>
+        </motion.div>
+
+        {/* Trust chips */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.75 }}
+          className="mt-14 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] uppercase tracking-[0.2em] text-white/40"
+        >
+          <span className="flex items-center gap-1.5"><ShieldCheck size={13} /> Secure</span>
+          <span className="flex items-center gap-1.5"><Zap size={13} /> Fast Delivery</span>
+          <span className="flex items-center gap-1.5"><Award size={13} /> Modern Solutions</span>
+          <span className="flex items-center gap-1.5"><Globe size={13} /> Remote-first</span>
+        </motion.div>
       </div>
     </section>
   );
