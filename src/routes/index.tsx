@@ -185,6 +185,220 @@ function DynIcon({ name, size = 20, className }: { name: IconName; size?: number
 const ICON_NAMES: IconName[] = Object.keys(ICONS) as IconName[];
 
 const DEFAULTS: Data = {
+  // ---- Company (PC Nexus) ----
+  brandName: "PC Nexus",
+  brandTagline: "Intelligent Digital Solutions",
+  heroHeadline: "Building Intelligent Digital Solutions",
+  heroSubtitle:
+    "We help businesses transform ideas into powerful digital experiences through web development, data analytics, machine learning, and database solutions.",
+  ctaPrimary: "Hire Us",
+  ctaSecondary: "View Portfolio",
+  ctaQuote: "Request a Quote",
+  ctaBook: "Book Consultation",
+  whyTitle: "Why choose PC Nexus",
+  whyDescription:
+    "A modern studio built for outcomes — speed, craft, and technology that scales with your business.",
+  servicesTitle: "What we do",
+  servicesDescription:
+    "Four disciplines, one team. Delivered end-to-end from discovery to deployment.",
+  techTitle: "Technologies we use",
+  techDescription:
+    "A pragmatic stack picked for reliability, velocity, and long-term maintenance.",
+  processTitle: "How we work",
+  processDescription:
+    "A transparent process that keeps you informed at every step, from first call to long-term support.",
+  pricingTitle: "Simple, transparent pricing",
+  pricingDescription:
+    "Flexible engagements sized to your project. Every quote is bespoke — these are indicative starting points.",
+  testimonialsTitle: "Trusted by builders",
+  testimonialsDescription:
+    "Kind words from clients and collaborators we've shipped alongside.",
+  faqTitle: "Frequently asked questions",
+  faqDescription:
+    "Everything you need to know before we start working together.",
+  location: "Harare, Zimbabwe · Remote worldwide",
+  whatsapp: "+263000000000",
+  services: [
+    {
+      icon: "Globe",
+      title: "Web Development",
+      description:
+        "Fast, accessible, production-grade websites and web apps built for scale.",
+      features: [
+        "Business Websites",
+        "Portfolio Websites",
+        "Web Applications",
+        "REST APIs",
+        "Laravel Development",
+        "React Development",
+      ],
+    },
+    {
+      icon: "BarChart3",
+      title: "Data Analytics",
+      description:
+        "Turn scattered data into dashboards, decisions, and revenue.",
+      features: [
+        "Dashboard Development",
+        "Business Intelligence",
+        "Data Cleaning",
+        "SQL Analysis",
+        "Power BI",
+        "Business Reports",
+      ],
+    },
+    {
+      icon: "Brain",
+      title: "Machine Learning",
+      description:
+        "Practical ML that predicts, classifies, and drives operational value.",
+      features: [
+        "Predictive Models",
+        "Classification Models",
+        "Regression Models",
+        "Feature Engineering",
+        "Model Evaluation",
+      ],
+    },
+    {
+      icon: "Database",
+      title: "Database Solutions",
+      description:
+        "Robust data foundations — schemas, APIs, and architecture done right.",
+      features: [
+        "Database Design",
+        "MySQL",
+        "MongoDB",
+        "API Integration",
+        "System Architecture",
+      ],
+    },
+  ],
+  stats: [
+    { icon: "Trophy", value: "25", suffix: "+", label: "Projects Completed" },
+    { icon: "Layers", value: "20", suffix: "+", label: "Technologies Used" },
+    { icon: "Users", value: "100", suffix: "%", label: "Client Satisfaction" },
+    { icon: "Timer", value: "48", suffix: "h", label: "Avg. First Response" },
+    { icon: "Zap", value: "10", suffix: "x", label: "Faster Iteration" },
+  ],
+  technologies: [
+    { name: "React", icon: "Code2" },
+    { name: "TypeScript", icon: "Code2" },
+    { name: "Laravel", icon: "Server" },
+    { name: "PHP", icon: "Server" },
+    { name: "Python", icon: "Brain" },
+    { name: "Java", icon: "Cpu" },
+    { name: "MongoDB", icon: "Database" },
+    { name: "MySQL", icon: "Database" },
+    { name: "PostgreSQL", icon: "Database" },
+    { name: "Git", icon: "GitBranch" },
+    { name: "GitHub", icon: "GitBranch" },
+    { name: "Tailwind CSS", icon: "Palette" },
+    { name: "TensorFlow", icon: "Brain" },
+    { name: "Power BI", icon: "BarChart3" },
+    { name: "Docker", icon: "Package" },
+  ],
+  process: [
+    { icon: "Search", title: "Discovery", description: "We listen, ask, and map your goals to concrete outcomes." },
+    { icon: "PenTool", title: "Planning", description: "A scoped roadmap with milestones, deliverables, and dates." },
+    { icon: "Palette", title: "Design", description: "Prototypes that look premium and feel intuitive." },
+    { icon: "Code2", title: "Development", description: "Clean, testable code shipped in short iterations." },
+    { icon: "TestTube2", title: "Testing", description: "Automated + manual QA on every device that matters." },
+    { icon: "Rocket", title: "Deployment", description: "Zero-downtime release with monitoring and analytics." },
+    { icon: "LifeBuoy", title: "Support", description: "Ongoing improvements and priority support post-launch." },
+  ],
+  pricing: [
+    {
+      name: "Starter Website",
+      price: "$250",
+      period: "one-time",
+      description: "A polished landing or 3-page site to establish your presence.",
+      features: ["Up to 3 pages", "Responsive design", "Basic SEO", "Contact form", "1 revision round"],
+      cta: "Get started",
+    },
+    {
+      name: "Business Website",
+      price: "$650",
+      period: "one-time",
+      description: "A complete marketing site with CMS and analytics.",
+      features: ["Up to 8 pages", "CMS integration", "SEO optimized", "Analytics", "3 revision rounds", "30-day support"],
+      featured: true,
+      cta: "Most popular",
+    },
+    {
+      name: "Custom Web App",
+      price: "$1,500",
+      period: "starting at",
+      description: "Bespoke web applications with authentication and databases.",
+      features: ["Auth & user roles", "Database design", "Admin panel", "REST API", "Deployment", "60-day support"],
+      cta: "Request quote",
+    },
+    {
+      name: "Data Analytics",
+      price: "$450",
+      period: "per project",
+      description: "Dashboards, reports, and insights that unlock decisions.",
+      features: ["Power BI / Tableau", "SQL analysis", "Data cleaning", "Executive report", "Handover session"],
+      cta: "Talk to us",
+    },
+    {
+      name: "Machine Learning",
+      price: "$900",
+      period: "starting at",
+      description: "Predictive and classification models tailored to your data.",
+      features: ["Problem framing", "Feature engineering", "Model training", "Evaluation report", "API delivery"],
+      cta: "Discuss project",
+    },
+    {
+      name: "Enterprise",
+      price: "Custom",
+      period: "annual",
+      description: "Retainer engagement for teams shipping continuously.",
+      features: ["Dedicated engineer", "Priority SLAs", "Quarterly roadmap", "Architecture reviews", "Unlimited revisions"],
+      cta: "Contact sales",
+    },
+  ],
+  testimonials: [],
+  faqs: [
+    { q: "How long does a typical project take?", a: "Landing sites ship in 1–2 weeks. Business sites take 3–4 weeks. Custom web apps and ML projects run 6–12 weeks depending on scope." },
+    { q: "Do you work with clients outside Zimbabwe?", a: "Yes — we work remotely with clients worldwide. Communication happens over email, WhatsApp, and scheduled video calls." },
+    { q: "What does your pricing include?", a: "Every quote includes design, development, testing, deployment, and an initial support window. Ongoing support is available as a monthly retainer." },
+    { q: "Can you take over an existing project?", a: "Absolutely. We start with a code audit and a short discovery sprint before proposing a roadmap." },
+    { q: "Do you offer maintenance?", a: "Yes. Monthly maintenance plans cover updates, monitoring, backups, and priority fixes." },
+    { q: "How do we get started?", a: "Book a free consultation or send a message via the contact section. We reply within 48 hours." },
+  ],
+  footerCols: [
+    {
+      title: "Quick Links",
+      links: [
+        { label: "Services", href: "#services" },
+        { label: "Projects", href: "#projects" },
+        { label: "Pricing", href: "#pricing" },
+        { label: "Contact", href: "#contact" },
+      ],
+    },
+    {
+      title: "Services",
+      links: [
+        { label: "Web Development", href: "#services" },
+        { label: "Data Analytics", href: "#services" },
+        { label: "Machine Learning", href: "#services" },
+        { label: "Database Solutions", href: "#services" },
+      ],
+    },
+    {
+      title: "Resources",
+      links: [
+        { label: "Blog", href: "#blog" },
+        { label: "Certificates", href: "#certificates" },
+        { label: "FAQ", href: "#faq" },
+        { label: "Process", href: "#process" },
+      ],
+    },
+  ],
+  footerTagline:
+    "PC Nexus — building intelligent digital solutions for teams that ship.",
+  // ---- Personal / Founder ----
   name: "Persistance Chikanya",
   tagline: "Data · Analytics · Web",
   headlineLead: "Turning raw data",
