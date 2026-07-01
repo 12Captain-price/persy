@@ -86,7 +86,72 @@ type Post = {
   body: string;
 };
 
+// PC Nexus company types
+type IconName =
+  | "Globe" | "BarChart3" | "Brain" | "Database" | "Code2" | "Cpu"
+  | "Layers" | "Rocket" | "ShieldCheck" | "Zap" | "Trophy" | "Users"
+  | "Timer" | "Award" | "MessageCircle" | "Cloud" | "GitBranch"
+  | "Server" | "Package" | "Palette" | "Search" | "PenTool" | "TestTube2"
+  | "LifeBuoy" | "DollarSign" | "Building2" | "Star" | "Sparkles";
+
+type Service = {
+  icon: IconName;
+  title: string;
+  description: string;
+  features: string[];
+};
+type Stat = { icon: IconName; value: string; label: string; suffix?: string };
+type Tech = { name: string; icon: IconName };
+type ProcessStep = { icon: IconName; title: string; description: string };
+type PricingTier = {
+  name: string;
+  price: string;
+  period: string;
+  description: string;
+  features: string[];
+  featured?: boolean;
+  cta: string;
+};
+type Testimonial = { name: string; role: string; quote: string; rating: number };
+type FAQ = { q: string; a: string };
+type FooterCol = { title: string; links: { label: string; href: string }[] };
+
 type Data = {
+  // Company (PC Nexus)
+  brandName: string;
+  brandTagline: string;
+  heroHeadline: string;
+  heroSubtitle: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+  ctaQuote: string;
+  ctaBook: string;
+  whyTitle: string;
+  whyDescription: string;
+  servicesTitle: string;
+  servicesDescription: string;
+  techTitle: string;
+  techDescription: string;
+  processTitle: string;
+  processDescription: string;
+  pricingTitle: string;
+  pricingDescription: string;
+  testimonialsTitle: string;
+  testimonialsDescription: string;
+  faqTitle: string;
+  faqDescription: string;
+  location: string;
+  whatsapp: string;
+  services: Service[];
+  stats: Stat[];
+  technologies: Tech[];
+  process: ProcessStep[];
+  pricing: PricingTier[];
+  testimonials: Testimonial[];
+  faqs: FAQ[];
+  footerCols: FooterCol[];
+  footerTagline: string;
+  // Personal / founder
   name: string;
   tagline: string;
   headlineLead: string;
@@ -105,6 +170,19 @@ type Data = {
   experience: Experience[];
   posts: Post[];
 };
+
+// Icon renderer for data-driven icons
+const ICONS: Record<IconName, React.ComponentType<{ size?: number; className?: string }>> = {
+  Globe, BarChart3, Brain, Database, Code2, Cpu, Layers, Rocket,
+  ShieldCheck, Zap, Trophy, Users, Timer, Award, MessageCircle,
+  Cloud, GitBranch, Server, Package, Palette, Search, PenTool,
+  TestTube2, LifeBuoy, DollarSign, Building2, Star, Sparkles,
+};
+function DynIcon({ name, size = 20, className }: { name: IconName; size?: number; className?: string }) {
+  const C = ICONS[name] || Sparkles;
+  return <C size={size} className={className} />;
+}
+const ICON_NAMES: IconName[] = Object.keys(ICONS) as IconName[];
 
 const DEFAULTS: Data = {
   name: "Persistance Chikanya",
