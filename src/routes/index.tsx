@@ -26,27 +26,28 @@ import "@fontsource/inter/600.css";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Persistance Chikanya — Data, Analytics & Web" },
+      { title: "PC Nexus — Intelligent Digital Solutions" },
       {
         name: "description",
         content:
-          "Portfolio of Persistance Chikanya — aspiring data scientist & web developer. Python, SQL, React, Power BI projects and certifications.",
+          "PC Nexus builds intelligent digital solutions — web development, data analytics, machine learning and database engineering. Founded by Persistance Chikanya.",
       },
-      { property: "og:title", content: "Persistance Chikanya — Data, Analytics & Web" },
+      { property: "og:title", content: "PC Nexus — Intelligent Digital Solutions" },
       {
         property: "og:description",
         content:
-          "Aspiring data scientist & web developer. Python, SQL, React, Power BI.",
+          "We help businesses transform ideas into powerful digital experiences through web, data, ML and database solutions.",
       },
       { property: "og:url", content: "https://persy.lovable.app" },
       { property: "og:image", content: "https://persy.lovable.app/og-image.jpg" },
       { property: "og:image:width", content: "1216" },
       { property: "og:image:height", content: "640" },
-      { name: "twitter:title", content: "Persistance Chikanya — Data, Analytics & Web" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "PC Nexus — Intelligent Digital Solutions" },
       {
         name: "twitter:description",
         content:
-          "Aspiring data scientist & web developer. Python, SQL, React, Power BI.",
+          "Web · Data · ML · Databases. Premium digital solutions by PC Nexus.",
       },
       { name: "twitter:image", content: "https://persy.lovable.app/og-image.jpg" },
     ],
