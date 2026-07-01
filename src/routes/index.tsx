@@ -2,33 +2,26 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import {
-  Pencil,
-  Mail,
-  Linkedin,
-  Github,
-  Upload,
-  Trash2,
-  FileText,
-  Image as ImageIcon,
-  Plus,
-  X,
-  ExternalLink,
-  Lock,
-  Unlock,
-  Sun,
-  Moon,
-  Download,
-  Share2,
-  Check,
+  Pencil, Mail, Linkedin, Github, Upload, Trash2, FileText,
+  Image as ImageIcon, Plus, X, ExternalLink, Lock, Unlock, Sun, Moon,
+  Download, Share2, Check, Menu, ChevronDown, ArrowRight, ArrowUp,
+  Sparkles, Globe, BarChart3, Brain, Database, Code2, Cpu, Layers,
+  Rocket, ShieldCheck, Zap, Trophy, Users, Timer, Award, MessageCircle,
+  MapPin, Phone, Send, HelpCircle, Star, Search, PenTool, TestTube2,
+  Cloud, LifeBuoy, GitBranch, Server, Package, Palette, DollarSign,
+  Building2, Quote, Circle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/pc-nexus-logo.png.asset.json";
 import "@fontsource/space-grotesk/400.css";
 import "@fontsource/space-grotesk/500.css";
+import "@fontsource/space-grotesk/600.css";
 import "@fontsource/space-grotesk/700.css";
 import "@fontsource/jetbrains-mono/400.css";
 import "@fontsource/jetbrains-mono/500.css";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
 
 export const Route = createFileRoute("/")({
   head: () => ({
